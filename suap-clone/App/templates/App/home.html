@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mural Interativo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
+        function toggleSubmenu(id) {
+            const el = document.getElementById(id);
+            el.classList.toggle("hidden");
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const toggleBtn = document.getElementById("toggleBtn");
+
+            const isExpanded = sidebar.classList.contains("w-64");
+
+            sidebar.classList.toggle("w-64", !isExpanded);
+            sidebar.classList.toggle("w-16", isExpanded);
+
+            document.querySelectorAll(".sidebar-text").forEach(el => {
+                el.classList.toggle("hidden", isExpanded);
+            });
+
+            document.getElementById("sidebar-title").classList.toggle("hidden", isExpanded);
+            toggleBtn.innerHTML = isExpanded ? "&gt;" : "&lt;";
+        }
+    </script>
+</head>
+
+<body class="flex min-h-screen bg-gray-100">
+
+    <!-- Sidebar -->
+    <aside id="sidebar"
+        class="bg-slate-900 text-white flex flex-col p-6 shadow-lg transition-all duration-300 ease-in-out w-64 relative z-10">
+        <h2 id="sidebar-title" class="text-2xl font-bold mb-8">SUAP Clone</h2>
+        <nav class="flex flex-col gap-4">
+            <a href="{% url 'home' %}" class="flex items-center gap-2 text-gray-300 hover:text-white transition">🏠 <span class="sidebar-text">Página Inicial</span></a>
+            <a href="#" class="flex items-center gap-2 text-gray-300 hover:text-white transition">🏁 <span class="sidebar-text">Início</span></a>
+
+            <a href="#" onclick="toggleSubmenu('submenu-docs')" class="flex items-center gap-2 text-gray-300 hover:text-white transition">
+                📄 <span class="sidebar-text">Documentos/Processos</span>
+            </a>
+            <div id="submenu-docs" class="hidden ml-6 flex flex-col gap-2 text-sm">
+                <a href="#" class="text-gray-400 hover:text-white transition">Documentos Recebidos</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">Documentos Enviados</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">Processos</a>
+            </div>
+
+            <a href="#" onclick="toggleSubmenu('submenu-ensino')" class="flex items-center gap-2 text-gray-300 hover:text-white transition">
+                🎓 <span class="sidebar-text">Ensino</span>
+            </a>
+            <div id="submenu-ensino" class="hidden ml-6 flex flex-col gap-2 text-sm">
+                <a href="#" class="text-gray-400 hover:text-white transition">Boletins</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">Minhas disciplinas</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">Dados do aluno</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">Locais e horários de aulas</a>
+            </div>
+
+            <a href="#" onclick="toggleSubmenu('submenu-pesquisa')" class="flex items-center gap-2 text-gray-300 hover:text-white transition">
+                🔬 <span class="sidebar-text">Pesquisa</span>
+            </a>
+            <div id="submenu-pesquisa" class="hidden ml-6 flex flex-col gap-2 text-sm">
+                <a href="#" class="text-gray-400 hover:text-white transition">Editais</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">Projetos</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">Editora</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">Laboratórios multiusuário</a>
+            </div>
+
+            <a href="#" onclick="toggleSubmenu('submenu-extensao')" class="flex items-center gap-2 text-gray-300 hover:text-white transition">
+                🌐 <span class="sidebar-text">Extensão</span>
+            </a>
+            <div id="submenu-extensao" class="hidden ml-6 flex flex-col gap-2 text-sm">
+                <a href="#" class="text-gray-400 hover:text-white transition">Convênios</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">Estágios e Afins</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">Egressos</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">Projetos</a>
+                <a href="#" class="text-gray-400 hover:text-white transition">NEPP</a>
+            </div>
+
+            <a href="#" class="flex items-center gap-2 text-gray-300 hover:text-white transition">💼 <span class="sidebar-text">Central de serviços</span></a>
+            <a href="#" class="flex items-center gap-2 text-gray-300 hover:text-white transition">🩺 <span class="sidebar-text">Saúde</span></a>
+            <a href="#" class="flex items-center gap-2 text-gray-300 hover:text-white transition">📢 <span class="sidebar-text">Comunicação social</span></a>
+        </nav>
+
+        <!-- Botão de colapsar/expandir -->
+        <button onclick="toggleSidebar()" id="toggleBtn"
+        class="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-white text-black rounded-l-full px-2 py-1 z-20 border-none">
+        &lt;
+        </button>
+
+    </aside>
+
+    <!-- Conteúdo principal -->
+    <main class="flex-1 p-10">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Mural Interativo</h1>
+
+        <div id="mural" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for card in cards %}
+            <div class="relative bg-white rounded-xl shadow p-6">
+                <div class="absolute top-2 right-2 flex gap-2">
+                    <button class="move text-gray-500 hover:text-gray-800 cursor-move">☰</button>
+                    <button class="delete text-red-500 hover:text-red-700">✖</button>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-700">{{ card.titulo }}</h3>
+                <p class="text-gray-600 mt-2">{{ card.descricao }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <!-- Drag & drop + delete -->
+    <script>
+        Sortable.create(document.getElementById('mural'), {
+            animation: 150,
+            handle: '.move',
+        });
+
+        document.querySelectorAll('.delete').forEach(button => {
+            button.addEventListener('click', () => {
+                const card = button.closest('.relative');
+                card.remove();
+            });
+        });
+    </script>
+
+</body>
+</html>
