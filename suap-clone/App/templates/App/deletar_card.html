@@ -1,0 +1,21 @@
+
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Confirmar Exclusão</h2>
+    
+    <p class="mb-6">Você tem certeza que deseja excluir o card <strong>"{{ card.titulo }}"</strong>?</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="flex justify-end">
+            <a href="{% url 'home' %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded mr-2">
+                Cancelar
+            </a>
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                Confirmar Exclusão
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
