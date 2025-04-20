@@ -15,7 +15,7 @@
         }
 
         .sidebar-item.active {
-            @apply bg-blue-700 text-white;
+            @apply bg-blue-700/50 text-white;
         }
 
         .submenu-item {
@@ -23,15 +23,15 @@
         }
 
         .card {
-            @apply bg-white rounded-lg shadow-md overflow-hidden border border-gray-200;
+            @apply bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden;
         }
 
         .card-header {
-            @apply bg-blue-600 text-white px-4 py-2 font-semibold;
+            @apply bg-blue-600/50 text-white px-4 py-3 font-semibold border-b border-white/10;
         }
 
         .card-body {
-            @apply p-4;
+            @apply p-4 text-gray-200;
         }
     </style>
     <script>
@@ -71,7 +71,6 @@
                 animation: 150,
                 handle: '.move-handle',
                 onEnd: function (evt) {
-                    // Aqui você pode adicionar lógica para salvar a nova ordem no banco de dados
                     console.log('Item movido da posição', evt.oldIndex, 'para', evt.newIndex);
                 }
             });
@@ -99,14 +98,14 @@
     </script>
 </head>
 
-<body class="flex min-h-screen bg-gray-100 font-sans">
+<body class="flex min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 font-sans text-white">
 
     <!-- Sidebar -->
     <aside id="sidebar"
-        class="bg-blue-800 text-white flex flex-col p-4 shadow-lg transition-all duration-300 ease-in-out w-64 relative z-10">
+        class="bg-blue-800/50 backdrop-blur-lg text-white flex flex-col p-4 shadow-lg transition-all duration-300 ease-in-out w-64 relative z-10 border-r border-white/10">
         <div class="flex items-center justify-between mb-8">
             <h2 id="sidebar-title" class="text-xl font-bold">SIGED</h2>
-            <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-blue-800 font-bold">
+            <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white font-bold">
                 {% if user.is_authenticated %}
                 {{ user.first_name|first }}{{ user.last_name|first }}
                 {% else %}
@@ -196,7 +195,7 @@
 
         <!-- Botão de colapsar/expandir -->
         <button onclick="toggleSidebar()" id="toggleBtn"
-            class="absolute top-1/2 -right-3 transform -translate-y-1/2 bg-white text-blue-800 rounded-full w-6 h-6 flex items-center justify-center shadow-md border-none cursor-pointer">
+            class="absolute top-1/2 -right-3 transform -translate-y-1/2 bg-white/20 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md border border-white/10 cursor-pointer hover:bg-white/30 transition">
             <span class="material-icons text-sm">chevron_left</span>
         </button>
     </aside>
@@ -204,86 +203,40 @@
     <!-- Conteúdo principal -->
     <main class="flex-1 p-6 overflow-auto">
         <div class="max-w-7xl mx-auto">
-            <!-- Barra superior -->
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold text-gray-800 ">Bem-vindo, {% if user.is_authenticated %}{{ user.first_name
-                    }}{% else %}Visitante{% endif %}</h1>
+            <!-- Barra superior - Correção do Bem-vindo aqui -->
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-2xl font-bold">Bem-vindo, {% if user.is_authenticated %}{{ user.get_full_name|default:user.username }}{% else %}Visitante{% endif %}</h1>
                 <div class="flex items-center gap-4">
                     <div class="relative">
                         <input type="text" placeholder="Pesquisar..."
-                            class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <span class="material-icons absolute left-3 top-2 text-gray-400">search</span>
+                            class="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-blue-300">
+                        <span class="material-icons absolute left-3 top-2 text-blue-400">search</span>
                     </div>
-                    <span class="material-icons text-gray-600 cursor-pointer hover:text-blue-600">notifications</span>
+                    <span class="material-icons text-blue-300 cursor-pointer hover:text-yellow-300 transition">notifications</span>
                 </div>
             </div>
 
-
-            <!-- Botão de colapsar/expandir -->
-            <button onclick="toggleSidebar()" id="toggleBtn"
-                class="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-white text-black rounded-l-full px-2 py-1 z-20 border-none">
-                &lt;
-            </button>
-            </aside>
-
-            <!-- Conteúdo principal -->
-            <main class="flex-1 p-10">
-                <h1 class="text-3xl font-bold text-gray-800 mb-6">Mural Interativo</h1>
-
-                <div id="mural" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Mural Interativo -->
+            <div class="mb-8 border-t border-white/10 pt-4">
+                <h2 class="text-xl font-semibold mb-4">Mural Interativo</h2>
+                <div id="mural" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 border border-white/10 p-4 rounded-lg bg-white/5 backdrop-blur-sm">
                     {% for card in cards %}
-                    <div class="relative bg-white rounded-xl shadow p-6" data-card-id="{{ card.id }}">
-                        <div class="absolute top-2 right-2 flex gap-2">
-                            <button class="move text-gray-500 hover:text-gray-800 cursor-move">☰</button>
-                            <button class="delete text-red-500 hover:text-red-700">✖</button>
+                    <div class="card" data-card-id="{{ card.id }}">
+                        <div class="card-header flex justify-between items-center">
+                            <h3>{{ card.titulo }}</h3>
+                            <div class="flex gap-2">
+                                <span class="material-icons move-handle cursor-move text-sm hover:text-yellow-300">drag_handle</span>
+                                <span class="material-icons delete-card cursor-pointer text-sm hover:text-red-400">close</span>
+                            </div>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-700">{{ card.titulo }}</h3>
-                        <p class="text-gray-600 mt-2">{{ card.descricao }}</p>
+                        <div class="card-body">
+                            <p>{{ card.descricao }}</p>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
-            </main>
-
-            <!-- Drag & drop + delete -->
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const mural = document.getElementById('mural');
-
-                    if (mural) {
-                        Sortable.create(mural, {
-                            animation: 150,
-                            handle: '.move',
-                            onEnd: function (evt) {
-                                console.log(`Item movido de ${evt.oldIndex} para ${evt.newIndex}`);
-                            }
-                        });
-                    }
-
-                    document.querySelectorAll('.delete').forEach(button => {
-                        button.addEventListener('click', () => {
-                            const card = button.closest('.relative');
-                            const cardId = card.getAttribute('data-card-id');
-
-                            if (confirm('Deseja realmente remover este card?')) {
-                                fetch(`{% url 'deletar_card' 0 %}`.replace('0', cardId), {
-                                    method: 'POST',
-                                    headers: {
-                                        'X-CSRFToken': '{{ csrf_token }}',
-                                    },
-                                }).then(res => {
-                                    if (res.ok) {
-                                        card.remove();
-                                    }
-                                });
-                            }
-                        });
-                    });
-                });
-            </script>
-        </div>
-        </div>
+            </div>
         </div>
     </main>
 </body>
-
 </html>
