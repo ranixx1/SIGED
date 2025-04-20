@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Card
 from .forms import CardForm
+from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 
-@login_required(login_url='/usuarios/login/')
 def home(request):
+    if not request.user.is_authenticated:
+        return redirect('usuarios/login')
     cards = Card.objects.all().order_by('-id')  # Ordena do mais novo para o mais antigo
     return render(request, 'App/home.html', {'cards': cards})
 
