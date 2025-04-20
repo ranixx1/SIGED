@@ -136,5 +136,5 @@ MESSAGE_TAGS = {
     constants.ERROR: 'bg-red-50 text-red-700'
 }
 
-LOGIN_URL = '/login/'  # Ou o nome correto da sua rota de login
+LOGIN_URL = '/usuarios/login/'  # Ou o nome correto da sua rota de login
 LOGIN_REDIRECT_URL = '/home/'  # ou o nome da view pós-login
