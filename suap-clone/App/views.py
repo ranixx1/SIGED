@@ -4,6 +4,7 @@ from .forms import CardForm
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 
+@login_required
 def home(request):
     if not request.user.is_authenticated:
         return redirect('usuarios/login')
