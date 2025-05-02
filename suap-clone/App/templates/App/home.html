@@ -11,27 +11,35 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         .sidebar-item {
-            @apply flex items-center gap-3 text-gray-300 hover:text-white transition p-2 rounded;
+            @apply flex items-center gap-3 text-gray-600 hover:text-[#5a7a3a] transition p-2 rounded-lg;
         }
 
         .sidebar-item.active {
-            @apply bg-blue-700/50 text-white;
+            @apply bg-[#6c8a4e]/20 text-[#5a7a3a] font-medium;
         }
 
         .submenu-item {
-            @apply text-gray-400 hover:text-white transition p-2 rounded text-sm;
+            @apply text-gray-500 hover:text-[#5a7a3a] transition p-2 rounded-lg text-sm;
         }
 
         .card {
-            @apply bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden;
+            @apply bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow;
         }
 
         .card-header {
-            @apply bg-blue-600/50 text-white px-4 py-3 font-semibold border-b border-white/10;
+            @apply bg-[#5a7a3a] text-white px-4 py-3 font-semibold border-b border-[#4a6a2a]/30;
         }
 
         .card-body {
-            @apply p-4 text-gray-200;
+            @apply p-4 text-gray-700;
+        }
+
+        .search-input {
+            @apply pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5a7a3a]/50 focus:border-transparent text-gray-700 placeholder-gray-400;
+        }
+
+        .main-bg {
+            background-color: #f8faf7;
         }
     </style>
     <script>
@@ -40,7 +48,7 @@
             const el = document.getElementById(id);
             el.classList.toggle("hidden");
             const icon = document.querySelector(`[data-submenu="${id}"]`);
-            icon.textContent = icon.textContent === 'expand_more' ? 'chevron_right' : 'expand_more';
+            icon.textContent = icon.textContent === 'chevron_right' ? 'expand_more' : 'chevron_right';
         }
 
         function toggleSidebar() {
@@ -50,22 +58,25 @@
             sidebar.classList.toggle("w-64", !isExpanded);
             sidebar.classList.toggle("w-20", isExpanded);
 
+            // Oculta ou mostra textos da sidebar
             document.querySelectorAll(".sidebar-text").forEach(el => {
                 el.classList.toggle("hidden", isExpanded);
             });
 
+            // Fecha submenus ao reduzir
             document.querySelectorAll(".submenu").forEach(el => {
                 if (isExpanded) return;
                 el.classList.add("hidden");
             });
 
+            // Oculta ou mostra o título e ícone do botão
             document.getElementById("sidebar-title").classList.toggle("hidden", isExpanded);
             document.getElementById("toggleBtn").innerHTML = isExpanded ?
                 '<span class="material-icons">chevron_left</span>' :
                 '<span class="material-icons">chevron_right</span>';
         }
 
-        // Inicialização do Sortable
+        // Inicialização do Sortable e botão de exclusão
         document.addEventListener('DOMContentLoaded', function () {
             new Sortable(document.getElementById('mural'), {
                 animation: 150,
@@ -96,147 +107,312 @@
             });
         });
     </script>
+
 </head>
 
-<body class="flex min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 font-sans text-white">
+<body class="flex min-h-screen bg-white font-sans text-gray-800">
 
     <!-- Sidebar -->
     <aside id="sidebar"
-        class="bg-blue-800/50 backdrop-blur-lg text-white flex flex-col p-4 shadow-lg transition-all duration-300 ease-in-out w-64 relative z-10 border-r border-white/10">
-        <div class="flex items-center justify-between mb-8">
-            <h2 id="sidebar-title" class="text-xl font-bold">SIGED</h2>
-            <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white font-bold">
-                {% if user.is_authenticated %}
-                {{ user.first_name|first }}{{ user.last_name|first }}
-                {% else %}
-                ?
-                {% endif %}
+        class="bg-[#7a9a5a] text-white flex flex-col p-4 shadow-lg transition-all duration-300 ease-in-out w-64 relative z-10 border-r border-gray-200">
+        <!-- Cabeçalho com logo e notificações -->
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold flex items-center">
+                <span class="material-icons mr-2">school</span>
+                SIGED
+            </h2>
+            <div class="relative">
+                <button class="text-gray-300 hover:text-white relative">
+                    <span class="material-icons">notifications</span>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
             </div>
         </div>
+        <div class="mb-6">
+            <!-- Área do usuário -->
+            <div class="flex items-center justify-between mb-4 p-2 bg-[#3a5a2a]/50 rounded-lg">
+                <div class="flex items-center gap-3">
+                    <!-- Avatar "mudo" (sem letras quando sidebar fechada) -->
+                    <div
+                        class="w-10 h-10 bg-[#3a5a2a] rounded-full flex items-center justify-center text-white font-bold overflow-hidden">
+                        {% if user.is_authenticated %}
+                        <span class="sidebar-text">{{ user.first_name|first }}{{ user.last_name|first }}</span>
+                        {% else %}
+                        <span class="sidebar-text">?</span>
+                        {% endif %}
+                    </div>
 
-        <nav class="flex flex-col gap-1 flex-1">
-            <a href="{% url 'home' %}" class="sidebar-item active">
-                <span class="material-icons">home</span>
-                <span class="sidebar-text">Página Inicial</span>
-            </a>
-
-            <div>
-                <a href="#" onclick="toggleSubmenu('submenu-docs')" class="sidebar-item">
-                    <span class="material-icons">description</span>
-                    <span class="sidebar-text">Documentos</span>
-                    <span class="material-icons ml-auto" data-submenu="submenu-docs">expand_more</span>
-                </a>
-                <div id="submenu-docs" class="submenu hidden ml-2 pl-4 border-l-2 border-blue-600 flex flex-col gap-1">
-                    <a href="#" class="submenu-item">Documentos Recebidos</a>
-                    <a href="#" class="submenu-item">Documentos Enviados</a>
-                    <a href="#" class="submenu-item">Processos</a>
+                    <!-- Texto do usuário (nome e cargo) -->
+                    <div class="text-sm sidebar-text">
+                        <div class="font-medium">Ranilton Costa</div>
+                        <div class="text-xs text-gray-300">Aluno</div>
+                    </div>
                 </div>
             </div>
 
-            <div>
-                <a href="#" onclick="toggleSubmenu('submenu-ensino')" class="sidebar-item">
-                    <span class="material-icons">school</span>
-                    <span class="sidebar-text">Ensino</span>
-                    <span class="material-icons ml-auto" data-submenu="submenu-ensino">expand_more</span>
-                </a>
-                <div id="submenu-ensino"
-                    class="submenu hidden ml-2 pl-4 border-l-2 border-blue-600 flex flex-col gap-1">
-                    <a href="#" class="submenu-item">Boletins</a>
-                    <a href="#" class="submenu-item">Minhas disciplinas</a>
-                    <a href="#" class="submenu-item">Dados do aluno</a>
-                    <a href="#" class="submenu-item">Horários de aula</a>
+
+            <!-- Barra de pesquisa minimalista -->
+            <div class="relative mb-6">
+                <div class="flex items-center border-b border-[#3a5a2a] pb-2">
+                    <span class="material-icons text-gray-300 mr-2">search</span>
+                    <input type="text" placeholder="Pesquisar..."
+                        class="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none">
                 </div>
             </div>
 
-            <div>
-                <a href="#" onclick="toggleSubmenu('submenu-pesquisa')" class="sidebar-item">
-                    <span class="material-icons">science</span>
-                    <span class="sidebar-text">Pesquisa</span>
-                    <span class="material-icons ml-auto" data-submenu="submenu-pesquisa">expand_more</span>
-                </a>
-                <div id="submenu-pesquisa"
-                    class="submenu hidden ml-2 pl-4 border-l-2 border-blue-600 flex flex-col gap-1">
-                    <a href="#" class="submenu-item">Editais</a>
-                    <a href="#" class="submenu-item">Projetos</a>
-                    <a href="#" class="submenu-item">Laboratórios</a>
-                </div>
-            </div>
+            <!-- Menu de navegação -->
+            <nav class="flex flex-col gap-1 flex-1">
 
-            <div>
-                <a href="#" onclick="toggleSubmenu('submenu-extensao')" class="sidebar-item">
-                    <span class="material-icons">public</span>
-                    <span class="sidebar-text">Extensão</span>
-                    <span class="material-icons ml-auto" data-submenu="submenu-extensao">expand_more</span>
-                </a>
-                <div id="submenu-extensao"
-                    class="submenu hidden ml-2 pl-4 border-l-2 border-blue-600 flex flex-col gap-1">
-                    <a href="#" class="submenu-item">Convênios</a>
-                    <a href="#" class="submenu-item">Estágios</a>
-                    <a href="#" class="submenu-item">Projetos</a>
-                </div>
-            </div>
+                <nav class="flex flex-col gap-1 flex-1">
+                    <a href="{% url 'home' %}" class="sidebar-item active">
+                        <span class="material-icons">home</span>
+                        <span class="sidebar-text">Página Inicial</span>
+                    </a>
 
-            <a href="#" class="sidebar-item">
-                <span class="material-icons">work</span>
-                <span class="sidebar-text">Central de serviços</span>
-            </a>
+                    <div>
+                        <a href="#" onclick="toggleSubmenu('submenu-docs')" class="sidebar-item">
+                            <span class="material-icons">description</span>
+                            <span class="sidebar-text">Documentos</span>
+                            <span class="material-icons ml-auto" data-submenu="submenu-docs">expand_more</span>
+                        </a>
+                        <div id="submenu-docs"
+                            class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
+                            <a href="#" class="submenu-item">Documentos Recebidos</a>
+                            <a href="#" class="submenu-item">Documentos Enviados</a>
+                            <a href="#" class="submenu-item">Processos</a>
+                        </div>
+                    </div>
 
-            <div class="mt-auto">
-                <a href="#" class="sidebar-item">
-                    <span class="material-icons">settings</span>
-                    <span class="sidebar-text">Configurações</span>
-                </a>
-                <a href="{% url 'logout' %}" class="sidebar-item">
-                    <span class="material-icons">logout</span>
-                    <span class="sidebar-text">Sair</span>
-                </a>
-            </div>
+                    <div>
+                        <a href="#" onclick="toggleSubmenu('submenu-ensino')" class="sidebar-item">
+                            <span class="material-icons">school</span>
+                            <span class="sidebar-text">Ensino</span>
+                            <span class="material-icons ml-auto" data-submenu="submenu-ensino">expand_more</span>
+                        </a>
+                        <div id="submenu-ensino"
+                            class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
+                            <a href="#" class="submenu-item">Boletins</a>
+                            <a href="#" class="submenu-item">Minhas disciplinas</a>
+                            <a href="#" class="submenu-item">Dados do aluno</a>
+                            <a href="#" class="submenu-item">Horários de aula</a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="#" onclick="toggleSubmenu('submenu-pesquisa')" class="sidebar-item">
+                            <span class="material-icons">science</span>
+                            <span class="sidebar-text">Pesquisa</span>
+                            <span class="material-icons ml-auto" data-submenu="submenu-pesquisa">expand_more</span>
+                        </a>
+                        <div id="submenu-pesquisa"
+                            class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
+                            <a href="#" class="submenu-item">Editais</a>
+                            <a href="#" class="submenu-item">Projetos</a>
+                            <a href="#" class="submenu-item">Laboratórios</a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="#" onclick="toggleSubmenu('submenu-extensao')" class="sidebar-item">
+                            <span class="material-icons">public</span>
+                            <span class="sidebar-text">Extensão</span>
+                            <span class="material-icons ml-auto" data-submenu="submenu-extensao">expand_more</span>
+                        </a>
+                        <div id="submenu-extensao"
+                            class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
+                            <a href="#" class="submenu-item">Convênios</a>
+                            <a href="#" class="submenu-item">Estágios</a>
+                            <a href="#" class="submenu-item">Projetos</a>
+                        </div>
+                    </div>
+
+                    <a href="#" class="sidebar-item">
+                        <span class="material-icons">work</span>
+                        <span class="sidebar-text">Central de serviços</span>
+                    </a>
+                    <a href="{% url 'logout' %}" class="sidebar-item text-white hover:text-white">
+                        <span class="material-icons">logout</span>
+                        <span class="sidebar-text">Sair</span>
+                    </a>
+        </div>
         </nav>
-
         <!-- Botão de colapsar/expandir -->
         <button onclick="toggleSidebar()" id="toggleBtn"
-            class="absolute top-1/2 -right-3 transform -translate-y-1/2 bg-white/20 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md border border-white/10 cursor-pointer hover:bg-white/30 transition">
+            class="absolute top-1/2 -right-3 transform -translate-y-1/2 bg-white text-[#7a9a5a] rounded-full w-6 h-6 flex items-center justify-center shadow-md border border-gray-300 cursor-pointer hover:bg-gray-100 transition">
             <span class="material-icons text-sm">chevron_left</span>
         </button>
     </aside>
 
     <!-- Conteúdo principal -->
-    <main class="flex-1 p-6 overflow-auto">
-        <div class="max-w-7xl mx-auto">
-            <!-- Barra superior - Correção do Bem-vindo aqui -->
-            <div class="flex justify-between items-center mb-8">
-                <h1 class="text-2xl font-bold">Bem-vindo, {% if user.is_authenticated %}{{ user.get_full_name|default:user.username }}{% else %}Visitante{% endif %}</h1>
-                <div class="flex items-center gap-4">
-                    <div class="relative">
-                        <input type="text" placeholder="Pesquisar..."
-                            class="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-blue-300">
-                        <span class="material-icons absolute left-3 top-2 text-blue-400">search</span>
-                    </div>
-                    <span class="material-icons text-blue-300 cursor-pointer hover:text-yellow-300 transition">notifications</span>
-                </div>
-            </div>
-
-            <!-- Mural Interativo -->
-            <div class="mb-8 border-t border-white/10 pt-4">
-                <h2 class="text-xl font-semibold mb-4">Mural Interativo</h2>
-                <div id="mural" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 border border-white/10 p-4 rounded-lg bg-white/5 backdrop-blur-sm">
-                    {% for card in cards %}
-                    <div class="card" data-card-id="{{ card.id }}">
-                        <div class="card-header flex justify-between items-center">
-                            <h3>{{ card.titulo }}</h3>
-                            <div class="flex gap-2">
-                                <span class="material-icons move-handle cursor-move text-sm hover:text-yellow-300">drag_handle</span>
-                                <span class="material-icons delete-card cursor-pointer text-sm hover:text-red-400">close</span>
+    <main class="flex-1 p-6 overflow-auto bg-gray-100 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Seção 1: Avisos -->
+                <div class="lg:col-span-1 bg-white rounded-xl shadow-sm p-4">
+                    <h2 class="text-xl font-semibold mb-4 text-[#7a9a5a] border-b pb-2">Avisos</h2>
+                    <div class="space-y-3">
+                        <!-- Aviso 1 -->
+                        <div class="card bg-gray-50 rounded-lg p-3 border border-gray-200">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-medium text-gray-800">Reunião Pedagógica</h4>
+                                    <p class="text-sm text-gray-600 mt-1">25/10 - 14h na Sala dos Professores</p>
+                                </div>
+                                <span class="material-icons text-[#9ec178]">campaign</span>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <p>{{ card.descricao }}</p>
+
+                        <!-- Aviso 2 -->
+                        <div class="card bg-gray-50 rounded-lg p-3 border border-gray-200">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-medium text-gray-800">Entrega de TCC</h4>
+                                    <p class="text-sm text-gray-600 mt-1">Prazo final: 30/10 até 23:59</p>
+                                </div>
+                                <span class="material-icons text-[#9ec178]">assignment</span>
+                            </div>
+                        </div>
+
+                        <!-- Aviso 3 -->
+                        <div class="card bg-gray-50 rounded-lg p-3 border border-gray-200">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-medium text-gray-800">Manutenção do Sistema</h4>
+                                    <p class="text-sm text-gray-600 mt-1">26/10 das 00h às 06h</p>
+                                </div>
+                                <span class="material-icons text-[#9ec178]">engineering</span>
+                            </div>
                         </div>
                     </div>
-                    {% endfor %}
+                </div>
+
+                <!-- Seção 2: Atividades Recentes -->
+                <div class="lg:col-span-1 bg-white rounded-xl shadow-sm p-4">
+                    <h2 class="text-xl font-semibold mb-4 text-[#7a9a5a] border-b pb-2">Atividades</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <div class="bg-[#9ec178]/10 p-2 rounded-full">
+                                <span class="material-icons text-[#7a9a5a]">assignment_turned_in</span>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium">Trabalho de Matemática avaliado</p>
+                                <p class="text-xs text-gray-500">Ontem às 14:30</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="bg-[#9ec178]/10 p-2 rounded-full">
+                                <span class="material-icons text-[#7a9a5a]">forum</span>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium">Novo comentário no seu trabalho</p>
+                                <p class="text-xs text-gray-500">Hoje às 09:15</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção 3: Calendário Completo -->
+                <div class="lg:col-span-1 bg-white rounded-xl shadow-sm p-4">
+                    <h2 class="text-xl font-semibold mb-4 text-[#7a9a5a] border-b pb-2">Calendário - Maio 2025</h2>
+
+                    <!-- Cabeçalho dos dias da semana -->
+                    <div class="grid grid-cols-7 gap-1 text-center mb-3 text-xs font-medium text-gray-500">
+                        <div>D</div>
+                        <div>S</div>
+                        <div>T</div>
+                        <div>Q</div>
+                        <div>Q</div>
+                        <div>S</div>
+                        <div>S</div>
+                    </div>
+
+                    <!-- Dias do mês (exemplo: Maio 2025 começa em uma quinta) -->
+                    <div class="grid grid-cols-7 gap-1 text-center text-sm">
+                        <!-- Dias vazios antes do mês começar -->
+                        <div class="text-gray-300">27</div>
+                        <div class="text-gray-300">28</div>
+                        <div class="text-gray-300">29</div>
+                        <div class="text-gray-300">30</div>
+                        <div>1</div>
+                        <div>2</div>
+                        <div>3</div>
+
+                        <div>4</div>
+                        <div>5</div>
+                        <div>6</div>
+                        <div>7</div>
+                        <div>8</div>
+                        <div>9</div>
+                        <div>10</div>
+
+                        <div>11</div>
+                        <div>12</div>
+                        <div>13</div>
+                        <div>14</div>
+                        <div>15</div>
+                        <div>16</div>
+                        <div class="bg-[#7a9a5a]/20 rounded-full font-medium">17</div> <!-- Evento -->
+
+                        <div>18</div>
+                        <div>19</div>
+                        <div class="bg-[#9ec178]/20 rounded-full font-medium">20</div> <!-- Evento -->
+                        <div>21</div>
+                        <div>22</div>
+                        <div>23</div>
+                        <div>24</div>
+
+                        <div>25</div>
+                        <div>26</div>
+                        <div>27</div>
+                        <div>28</div>
+                        <div>29</div>
+                        <div>30</div>
+                        <div>31</div>
+                    </div>
+
+                    <!-- Legenda dos eventos -->
+                    <div class="mt-4 space-y-2 text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-[#9ec178] rounded-full"></div>
+                            <span>Entrega de TCC (20/05)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-[#7a9a5a] rounded-full"></div>
+                            <span>Avaliação Bimestral (17/05)</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Seção 4: Mural Interativo (maior) -->
+                <div class="lg:col-span-1 bg-white rounded-xl shadow-sm p-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold text-[#7a9a5a]">Mural Interativo</h2>
+                        <button class="text-sm text-[#7a9a5a] hover:text-[#9ec178] flex items-center">
+                            <span class="material-icons text-base mr-1">add</span>
+                            Novo
+                        </button>
+                    </div>
+                    <div id="mural" class="space-y-4">
+                        {% for card in cards %}
+                        <div class="card border border-gray-200 rounded-lg" data-card-id="{{ card.id }}">
+                            <div
+                                class="card-header bg-[#9ec178] text-white px-3 py-2 rounded-t-lg flex justify-between items-center">
+                                <h3 class="text-sm font-medium">{{ card.titulo }}</h3>
+                                <div class="flex gap-1">
+                                    <span
+                                        class="material-icons move-handle cursor-move text-sm hover:text-white/80">drag_handle</span>
+                                    <span
+                                        class="material-icons delete-card cursor-pointer text-sm hover:text-white/80">close</span>
+                                </div>
+                            </div>
+                            <div class="card-body p-3 bg-gray-50 rounded-b-lg">
+                                <p class="text-sm text-gray-700">{{ card.descricao }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
     </main>
-</body>
-</html>
