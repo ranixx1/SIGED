@@ -62,6 +62,9 @@
             document.querySelectorAll(".sidebar-text").forEach(el => {
                 el.classList.toggle("hidden", isExpanded);
             });
+            document.getElementById("notification-icon-collapsed").classList.toggle("hidden", !isExpanded);
+            document.getElementById("search-box").classList.toggle("hidden", !isExpanded);
+
 
             // Fecha submenus ao reduzir
             document.querySelectorAll(".submenu").forEach(el => {
@@ -119,10 +122,19 @@
         <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold flex items-center">
                 <span class="material-icons mr-2">school</span>
-                SIGED
+                <span class="sidebar-text">SIGED</span>
             </h2>
-            <div class="relative">
+            <!-- Ícone de notificação no modo expandido -->
+            <div class="relative sidebar-text">
                 <button class="text-gray-300 hover:text-white relative">
+                    <span class="material-icons">notifications</span>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+            </div>
+
+            <!-- Ícone de notificação no modo colapsado -->
+            <div class="relative mt-4 hidden" id="notification-icon-collapsed">
+                <button class="text-white hover:text-white relative">
                     <span class="material-icons">notifications</span>
                     <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                 </button>
