@@ -1,13 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Card
 from .forms import CardForm
-from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, Http404
+from django.contrib.auth import authenticate
+
+
+# Create your views here.
 
 @login_required
 def home(request):
     if not request.user.is_authenticated:
-        return redirect('usuarios/login')
+        return HttpResponse("Usuário não autenticado")
     cards = Card.objects.all().order_by('-id')  # Ordena do mais novo para o mais antigo
     return render(request, 'App/home.html', {'cards': cards})
 
