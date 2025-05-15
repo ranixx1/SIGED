@@ -129,12 +129,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 #Messages
-from django.contrib.messages import constants
+#from django.contrib.messages import constants
 
-MESSAGE_TAGS = {
-    constants.SUCCESS: 'bg-green-50 text-green-700',
-    constants.ERROR: 'bg-red-50 text-red-700'
-}
+#MESSAGE_TAGS = {
+    #constants.SUCCESS: 'bg-green-50 text-green-700',
+    #constants.ERROR: 'bg-red-50 text-red-700'
+#}
 
 LOGIN_URL = '/usuarios/login/'  # Ou o nome correto da sua rota de login
 LOGIN_REDIRECT_URL = '/home/'  # ou o nome da view pós-login
