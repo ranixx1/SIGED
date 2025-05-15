@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'body' %}
+<link rel="stylesheet" href="../central/static/central/css/styles.css">
+<div class="container">
+    <h2 class="text-center my-4">Abertura de Chamado</h2>
+    
+    <!-- Tela inicial - Setores -->
+    <div id="setores-container">
+        <h4>Selecione o setor:</h4>
+        <div class="row" id="setores-grid">
+            <!-- Os setores serão adicionados via JavaScript -->
+        </div>
+    </div>
+
+    <!-- Formulário (inicialmente oculto) -->
+    <div id="form-container" style="display: none;">
+        <button class="btn btn-secondary mb-3" id="voltar-btn">← Voltar</button>
+        <h4 id="setor-selecionado-text"></h4>
+        
+        <form id="chamado-form">
+            <!-- Seus campos de formulário aqui -->
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'central/static/central/js/chamado.js' %}"></script>
+{% endblock %}
+
+
