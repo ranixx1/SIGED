@@ -48,3 +48,7 @@ def deletar_card(request, id):
         return redirect('home')
     
     return render(request, 'App/deletar_card.html', {'card': card})
+
+@login_required
+def chamados(request):
+    return render(request, 'App/pages/central/chamado.html')
