@@ -1,0 +1,110 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+h2, h4 {
+    font-weight: 600;
+}
+h2.text-center {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+h4.text-center {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Container principal dos setores */
+.setores-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.setores-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1200px;
+    /* Largura máxima do grid */
+    padding: 10px;
+}
+
+/* Cards dos setores */
+.setor-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+
+.setor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.setor-card .bi {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #4e73df;
+}
+
+.setor-card .card-title {
+    font-size: 0.9rem;
+    color: #333;
+    text-align: center;
+    margin: 0;
+    padding: 0 10px;
+}
+#setores-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Ocupa 100% da altura da tela */
+    text-align: center;
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .setor-card {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+@media (max-width: 576px) {
+    .setores-grid {
+        gap: 15px;
+    }
+
+    .setor-card {
+        width: 100px;
+        height: 100px;
+    }
+
+    .setor-card .bi {
+        font-size: 1.5rem;
+    }
+
+    .setor-card .card-title {
+        font-size: 0.8rem;
+    }
+}
