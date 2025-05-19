@@ -231,126 +231,114 @@
         }
     </style>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Setores disponíveis com ícones
-            const setores = [
-                { id: 'ti', nome: 'Tecnologia da Informação', icon: 'bi-laptop' },
-                { id: 'rh', nome: 'Recursos Humanos', icon: 'bi-people' },
-                { id: 'financeiro', nome: 'Financeiro', icon: 'bi-cash-stack' },
-                { id: 'manutencao', nome: 'Manutenção', icon: 'bi-tools' },
-                { id: 'limpeza', nome: 'Limpeza', icon: 'bi-trash' },
-                { id: 'outro', nome: 'Outro', icon: 'bi-grid' }
-            ];
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Setores disponíveis com ícones
+        const setores = [
+            { id: 'ti', nome: 'Tecnologia da Informação', icon: 'bi-laptop' },
+            { id: 'rh', nome: 'Recursos Humanos', icon: 'bi-people' },
+            { id: 'financeiro', nome: 'Financeiro', icon: 'bi-cash-stack' },
+            { id: 'manutencao', nome: 'Manutenção', icon: 'bi-tools' },
+            { id: 'limpeza', nome: 'Limpeza', icon: 'bi-trash' },
+            { id: 'outro', nome: 'Outro', icon: 'bi-grid' }
+        ];
 
-            const setoresGrid = document.getElementById('setores-grid');
-            const formContainer = document.getElementById('form-container');
-            const setoresContainer = document.getElementById('setores-container');
-            const setorSelecionadoText = document.getElementById('setor-selecionado-text');
-            const voltarBtn = document.getElementById('voltar-btn');
-            const chamadoForm = document.getElementById('chamado-form');
-            const setorInput = document.getElementById('setor-input');
+        const setoresGrid = document.getElementById('setores-grid');
+        const formContainer = document.getElementById('form-container');
+        const setoresContainer = document.getElementById('setores-container');
+        const setorSelecionadoText = document.getElementById('setor-selecionado-text');
+        const voltarBtn = document.getElementById('voltar-btn');
+        const chamadoForm = document.getElementById('chamado-form');
+        const setorInput = document.getElementById('setor-input');
 
-            // Adiciona os cards dos setores
-            setores.forEach(setor => {
-                const setorElement = document.createElement('div');
-                setorElement.className = 'setor-card';
-                setorElement.setAttribute('data-setor-id', setor.id);
-                setorElement.innerHTML = `
+        // Adiciona os cards dos setores
+        setores.forEach(setor => {
+            const setorElement = document.createElement('div');
+            setorElement.className = 'setor-card';
+            setorElement.setAttribute('data-setor-id', setor.id);
+            setorElement.innerHTML = `
                 <div class="d-flex flex-column align-items-center">
                     <i class="bi ${setor.icon}"></i>
                     <h5 class="card-title mt-2">${setor.nome}</h5>
                 </div>
             `;
-                setoresGrid.appendChild(setorElement);
+            setoresGrid.appendChild(setorElement);
+        });
+
+        // Adicionar evento de clique nos cards
+        document.querySelectorAll('.setor-card').forEach(card => {
+            card.addEventListener('click', function () {
+                const setId = this.getAttribute('data-setor-id');
+                const setor = setores.find(s => s.id === setId);
+
+                // Preenche o campo hidden do setor com o ID correto
+                setorInput.value = setor.id;
+
+                // Mostrar formulário
+                setorSelecionadoText.textContent = `Setor: ${setor.nome}`;
+                setoresContainer.style.display = 'none';
+                formContainer.style.display = 'block';
             });
+        });
 
-            // Adicionar evento de clique nos cards
-            document.querySelectorAll('.setor-card').forEach(card => {
-                card.addEventListener('click', function () {
-                    const setId = this.getAttribute('data-setor-id');
-                    const setor = setores.find(s => s.id === setId);
+        // Botão voltar
+        voltarBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            formContainer.style.display = 'none';
+            setoresContainer.style.display = 'block';
+        });
 
-                    // Preenche o campo hidden do setor
-                    setorInput.value = setor.nome;
+        // Envio do formulário
+        chamadoForm.addEventListener('submit', function (e) {
+            e.preventDefault();
 
-                    // Mostrar formulário
-                    setorSelecionadoText.textContent = `Setor: ${setor.nome}`;
-                    setoresContainer.style.display = 'none';
-                    formContainer.style.display = 'block';
-                });
-            });
+            // Validação básica
+            if (!setorInput.value || !document.getElementById('assunto').value ||
+                !document.getElementById('descricao').value ||
+                !document.getElementById('urgencia').value) {
+                alert('Por favor, preencha todos os campos!');
+                return;
+            }
 
-            // Botão voltar
-            voltarBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                formContainer.style.display = 'none';
-                setoresContainer.style.display = 'block';
-            });
-
-            // Envio do formulário
-            chamadoForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-
-                // Validação básica
-                if (!setorInput.value || !document.getElementById('assunto').value ||
-                    !document.getElementById('descricao').value ||
-                    !document.getElementById('urgencia').value) {
-                    alert('Por favor, preencha todos os campos!');
-                    return;
+            // Envia o formulário
+            fetch(chamadoForm.action, {
+                method: 'POST',
+                body: new FormData(chamadoForm),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                 }
-
-                // Envia o formulário
-                fetch(chamadoForm.action, {
-                    method: 'POST',
-                    body: new FormData(chamadoForm),
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na resposta do servidor');
                     }
+                    return response.json();
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Chamado enviado com sucesso!');
-                            chamadoForm.reset();
-                            formContainer.style.display = 'none';
-                            setoresContainer.style.display = 'block';
+                .then(data => {
+                    if (data.success) {
+                        alert('Chamado enviado com sucesso!');
+                        chamadoForm.reset();
+                        formContainer.style.display = 'none';
+                        setoresContainer.style.display = 'block';
+                    } else {
+                        // Mostra erros de validação se existirem
+                        if (data.errors) {
+                            let errorMessage = 'Erros encontrados:\n';
+                            for (const field in data.errors) {
+                                errorMessage += `${field}: ${data.errors[field]}\n`;
+                            }
+                            alert(errorMessage);
                         } else {
                             alert('Ocorreu um erro ao enviar o chamado.');
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Ocorreu um erro ao enviar o chamado.');
-                    });
-            });
-            $('#chamado-form').submit(function (e) {
-                e.preventDefault();
-                const formData = $(this).serialize();
-
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                    success: function (response) {
-                        if (response.success) {
-                            // Sucesso - exibe mensagem e reseta o form
-                            alert(response.message);
-                            $('#chamado-form')[0].reset();
-                        }
-                    },
-                    error: function (xhr) {
-                        // Trata erros de validação
-                        const errors = xhr.responseJSON.errors;
-                        for (const field in errors) {
-                            $(`#${field}`).addClass('is-invalid');
-                            $(`#${field}-error`).text(errors[field][0]);
-                        }
                     }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ocorreu um erro ao enviar o chamado: ' + error.message);
                 });
-            });
         });
-    </script>
+    });
+</script>
     {% endblock 'body' %}
