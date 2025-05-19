@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'body' %}
+<div class="max-w-4xl mx-auto p-6">
+    <a href="{% url 'ver_chamados' %}" class="inline-flex items-center text-green-600 hover:underline mb-4">
+        <i class="bi bi-arrow-left mr-2"></i> Voltar para Meus Chamados
+    </a>
+    
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <div class="flex justify-between items-start border-b pb-4 mb-4">
+            <h2 class="text-2xl font-bold text-gray-800">{{ chamado.assunto }}</h2>
+            <span class="px-3 py-1 rounded-full text-sm font-medium
+                {% if chamado.status == 'aberto' %}bg-green-100 text-green-800
+                {% elif chamado.status == 'em_andamento' %}bg-yellow-100 text-yellow-800
+                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {{ chamado.get_status_display }}
+            </span>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+                <h3 class="font-semibold text-gray-700 mb-2">Informações</h3>
+                <ul class="space-y-2">
+                    <li class="flex items-center">
+                        <i class="bi bi-building mr-2 text-gray-500"></i>
+                        <strong class="w-24 inline-block">Setor:</strong> {{ chamado.setor }}
+                    </li>
+                    <li class="flex items-center">
+                        <i class="bi bi-exclamation-triangle mr-2 text-gray-500"></i>
+                        <strong class="w-24 inline-block">Urgência:</strong>
+                        <span class="{% if chamado.urgencia == 'alta' %}text-red-600
+                                    {% elif chamado.urgencia == 'media' %}text-yellow-600
+                                    {% else %}text-green-600{% endif %}">
+                            {{ chamado.get_urgencia_display }}
+                        </span>
+                    </li>
+                    <li class="flex items-center">
+                        <i class="bi bi-calendar3 mr-2 text-gray-500"></i>
+                        <strong class="w-24 inline-block">Aberto em:</strong> 
+                        {{ chamado.data_criacao|date:"d/m/Y H:i" }}
+                    </li>
+                </ul>
+            </div>
+            
+            <div>
+                <h3 class="font-semibold text-gray-700 mb-2">Atualizações</h3>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-gray-600">Nenhuma atualização disponível</p>
+                    <!-- Aqui você pode adicionar um histórico de atualizações -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="mb-6">
+            <h3 class="font-semibold text-gray-700 mb-2">Descrição</h3>
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-gray-800 whitespace-pre-line">{{ chamado.descricao }}</p>
+            </div>
+        </div>
+        
+        <!-- Área para comentários/respostas -->
+        <div class="border-t pt-4">
+            <h3 class="font-semibold text-gray-700 mb-3">Adicionar Comentário</h3>
+            <form method="post" class="space-y-3">
+                {% csrf_token %}
+                <textarea name="comentario" rows="3" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Digite seu comentário..."></textarea>
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                    Enviar Comentário
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

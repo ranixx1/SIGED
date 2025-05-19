@@ -1,231 +1,356 @@
 {% extends "base.html" %}
 {% load static %}
 {% block 'body' %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abertura de Chamados</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'static/central/css/styles.css' %}">
-    <script src="{% static 'static/central/js/chamado.js' %}"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-</head>
-<style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f9f9f9;
-        margin: 0;
-        padding: 0;
-        color: #333;
-    }
-
-    h2,
-    h4 {
-        font-weight: 600;
-    }
-
-    h2.text-center {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-    }
-
-    h4.text-center {
-        font-size: 1.2rem;
-        margin-bottom: 1.5rem;
-    }
-
-    /* Container principal dos setores */
-    .setores-wrapper {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-    }
-
-    .setores-grid {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 20px;
-        max-width: 1200px;
-        /* Largura máxima do grid */
-        padding: 10px;
-        background-color: #e6fff5;
-        border: 1px solid #b2f0df;
-        border-radius: 10px;
-        padding: 20px;
+<div class="container">
+    <h2 class="text-center my-4 flex items-center justify-center gap-2 text-green-700">
+        <i class="bi bi-exclamation-circle-fill"></i> Abertura de Chamado
+    </h2>
 
 
-    }
+    <!-- Tela inicial - Setores -->
+    <div id="setores-container">
+        <h4 class="text-center mb-4">Selecione o setor:</h4>
+        <div class="setores-wrapper">
+            <div class="setores-grid" id="setores-grid">
+                <!-- Os setores serão adicionados via JavaScript -->
+            </div>
+        </div>
+    </div>
 
-    /* Cards dos setores */
-    .setor-card {
-        background-color: white;
-        border: 2px solid #a0f0da;
-        color: #004d40;
-        border-radius: 8px;
-        width: 160px;
-        height: 160px;
-        transition: 0.3s;
-    }
+    <!-- Formulário (inicialmente oculto) -->
+    <div id="form-container" style="display: none;"
+        class="bg-white shadow-lg rounded-xl p-6 border border-gray-200 max-w-xl mx-auto mt-6">
+        <button class="text-green-600 hover:text-green-700 flex items-center gap-2 mb-4" id="voltar-btn">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </button>
 
-    .setor-card:hover {
-        border-color: #00bfa5;
-        background-color: #e0fff8;
-        transform: scale(1.03);
-    }
+        <h4 id="setor-selecionado-text" class="text-lg font-semibold text-green-600 mb-6"></h4>
 
-    .setor-card .bi {
-        font-size: 2.5rem;
-        color: #00bfa5;
-        margin-bottom: 10px;
-    }
+        <form id="chamado-form" method="post" action="{% url 'criar_chamado' %}">
+            {% csrf_token %}
+            <input type="hidden" name="setor" id="setor-input">
 
-    .setor-card .card-title {
-        font-weight: 600;
-        color: #004d40;
-    }
+            <div class="mb-4">
+                <label for="assunto" class="block text-sm font-medium text-gray-700 mb-1">Assunto</label>
+                <input type="text"
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                    id="assunto" name="assunto" required>
+            </div>
 
-    #setores-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        /* Ocupa 100% da altura da tela */
-        text-align: center;
-    }
+            <div class="mb-4">
+                <label for="descricao" class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+                <textarea
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm resize-none focus:outline-none focus:ring-2 focus:ring-green-600"
+                    id="descricao" name="descricao" rows="4" required></textarea>
+            </div>
+
+            <div class="mb-4">
+                <label for="urgencia" class="block text-sm font-medium text-gray-700 mb-1">Urgência</label>
+                <select
+                    class="w-full border border-gray-300 rounded-md px-3 py-2 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                    id="urgencia" name="urgencia" required>
+                    <option value="">Selecione...</option>
+                    <option value="baixa">Baixa</option>
+                    <option value="media">Média</option>
+                    <option value="alta">Alta</option>
+                </select>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition-colors">
+                Enviar Chamado
+            </button>
+        </form>
+    </div>
 
 
-    /* Responsividade */
-    @media (max-width: 768px) {
-        .setor-card {
-            width: 120px;
-            height: 120px;
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
         }
-    }
 
-    @media (max-width: 576px) {
+        h2,
+        h4 {
+            font-weight: 600;
+        }
+
+        h2.text-center {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #7a9a5a;
+        }
+
+        h4.text-center {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: #7a9a5a;
+        }
+
+        /* Container principal dos setores */
+        .setores-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
         .setores-grid {
-            gap: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1200px;
+            padding: 20px;
+            background-color: rgba(122, 154, 90, 0.1);
+            border: 1px solid rgba(122, 154, 90, 0.3);
+            border-radius: 10px;
         }
 
+        /* Cards dos setores */
         .setor-card {
-            width: 100px;
-            height: 100px;
+            background-color: white;
+            border: 2px solid rgba(122, 154, 90, 0.3);
+            color: #7a9a5a;
+            border-radius: 8px;
+            width: 160px;
+            height: 160px;
+            transition: 0.3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+        }
+
+        .setor-card:hover {
+            border-color: #9ec178;
+            background-color: rgba(158, 193, 120, 0.1);
+            transform: scale(1.03);
+            box-shadow: 0 4px 8px rgba(122, 154, 90, 0.2);
         }
 
         .setor-card .bi {
-            font-size: 1.5rem;
+            font-size: 2.5rem;
+            color: #7a9a5a;
+            margin-bottom: 10px;
+            transition: 0.3s;
+        }
+
+        .setor-card:hover .bi {
+            color: #9ec178;
         }
 
         .setor-card .card-title {
-            font-size: 0.8rem;
+            font-weight: 600;
+            color: #7a9a5a;
+            margin: 0;
         }
-    }
-</style>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Setores disponíveis com ícones
-        const setores = [
-            { id: 'ti', nome: 'Tecnologia da Informação', icon: 'bi-laptop' },
-            { id: 'rh', nome: 'Recursos Humanos', icon: 'bi-people' },
-            { id: 'financeiro', nome: 'Financeiro', icon: 'bi-cash-stack' },
-            { id: 'manutencao', nome: 'Manutenção', icon: 'bi-tools' },
-            { id: 'limpeza', nome: 'Limpeza', icon: 'bi-trash' },
-            { id: 'outro', nome: 'Outro', icon: 'bi-grid' }
-        ];
 
-        const setoresGrid = document.getElementById('setores-grid');
-        const formContainer = document.getElementById('form-container');
-        const setoresContainer = document.getElementById('setores-container');
-        const setorSelecionadoText = document.getElementById('setor-selecionado-text');
-        const voltarBtn = document.getElementById('voltar-btn');
-        const chamadoForm = document.getElementById('chamado-form');
+        #setores-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+        }
 
-        setores.forEach(setor => {
-            const setorElement = document.createElement('div');
-            setorElement.className = 'setor-card';
-            setorElement.setAttribute('data-setor-id', setor.id);
-            setorElement.innerHTML = `
-            <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                <i class="bi ${setor.icon}"></i>
-                <h5 class="card-title mt-2">${setor.nome}</h5>
-            </div>
-        `;
-            setoresGrid.appendChild(setorElement);
-        });
-        // Adicionar evento de clique nos cards
-        document.querySelectorAll('.setor-card').forEach(card => {
-            card.addEventListener('click', function () {
-                const setId = this.getAttribute('data-setor-id');
-                const setor = setores.find(s => s.id === setId);
+        /* Botão voltar */
+        #voltar-btn {
+            color: #7a9a5a;
+            border-color: #7a9a5a;
+        }
 
-                // Mostrar formulário
-                setorSelecionadoText.textContent = `Setor: ${setor.nome}`;
-                setoresContainer.style.display = 'none';
-                formContainer.style.display = 'block';
+        #voltar-btn:hover {
+            background-color: #7a9a5a;
+            color: white;
+        }
+
+        /* Formulário */
+        #form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .setor-card {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .setores-grid {
+                gap: 15px;
+            }
+
+            .setor-card {
+                width: 100px;
+                height: 100px;
+            }
+
+            .setor-card .bi {
+                font-size: 1.8rem;
+            }
+
+            .setor-card .card-title {
+                font-size: 0.9rem;
+            }
+
+            .btn-success {
+                background-color: #7a9a5a;
+                border: none;
+                color: white;
+                transition: 0.3s;
+            }
+
+            .btn-success:hover {
+                background-color: #6b8e4e;
+            }
+
+            .form-control,
+            .form-select {
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                padding: 10px;
+                transition: border-color 0.3s, box-shadow 0.3s;
+            }
+
+            .form-control:focus,
+            .form-select:focus {
+                border-color: #7a9a5a;
+                box-shadow: 0 0 5px rgba(122, 154, 90, 0.4);
+            }
+
+
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Setores disponíveis com ícones
+            const setores = [
+                { id: 'ti', nome: 'Tecnologia da Informação', icon: 'bi-laptop' },
+                { id: 'rh', nome: 'Recursos Humanos', icon: 'bi-people' },
+                { id: 'financeiro', nome: 'Financeiro', icon: 'bi-cash-stack' },
+                { id: 'manutencao', nome: 'Manutenção', icon: 'bi-tools' },
+                { id: 'limpeza', nome: 'Limpeza', icon: 'bi-trash' },
+                { id: 'outro', nome: 'Outro', icon: 'bi-grid' }
+            ];
+
+            const setoresGrid = document.getElementById('setores-grid');
+            const formContainer = document.getElementById('form-container');
+            const setoresContainer = document.getElementById('setores-container');
+            const setorSelecionadoText = document.getElementById('setor-selecionado-text');
+            const voltarBtn = document.getElementById('voltar-btn');
+            const chamadoForm = document.getElementById('chamado-form');
+            const setorInput = document.getElementById('setor-input');
+
+            // Adiciona os cards dos setores
+            setores.forEach(setor => {
+                const setorElement = document.createElement('div');
+                setorElement.className = 'setor-card';
+                setorElement.setAttribute('data-setor-id', setor.id);
+                setorElement.innerHTML = `
+                <div class="d-flex flex-column align-items-center">
+                    <i class="bi ${setor.icon}"></i>
+                    <h5 class="card-title mt-2">${setor.nome}</h5>
+                </div>
+            `;
+                setoresGrid.appendChild(setorElement);
+            });
+
+            // Adicionar evento de clique nos cards
+            document.querySelectorAll('.setor-card').forEach(card => {
+                card.addEventListener('click', function () {
+                    const setId = this.getAttribute('data-setor-id');
+                    const setor = setores.find(s => s.id === setId);
+
+                    // Preenche o campo hidden do setor
+                    setorInput.value = setor.nome;
+
+                    // Mostrar formulário
+                    setorSelecionadoText.textContent = `Setor: ${setor.nome}`;
+                    setoresContainer.style.display = 'none';
+                    formContainer.style.display = 'block';
+                });
+            });
+
+            // Botão voltar
+            voltarBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                formContainer.style.display = 'none';
+                setoresContainer.style.display = 'block';
+            });
+
+            // Envio do formulário
+            chamadoForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Validação básica
+                if (!setorInput.value || !document.getElementById('assunto').value ||
+                    !document.getElementById('descricao').value ||
+                    !document.getElementById('urgencia').value) {
+                    alert('Por favor, preencha todos os campos!');
+                    return;
+                }
+
+                // Envia o formulário
+                fetch(chamadoForm.action, {
+                    method: 'POST',
+                    body: new FormData(chamadoForm),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Chamado enviado com sucesso!');
+                            chamadoForm.reset();
+                            formContainer.style.display = 'none';
+                            setoresContainer.style.display = 'block';
+                        } else {
+                            alert('Ocorreu um erro ao enviar o chamado.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Ocorreu um erro ao enviar o chamado.');
+                    });
+            });
+            $('#chamado-form').submit(function (e) {
+                e.preventDefault();
+                const formData = $(this).serialize();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    success: function (response) {
+                        if (response.success) {
+                            // Sucesso - exibe mensagem e reseta o form
+                            alert(response.message);
+                            $('#chamado-form')[0].reset();
+                        }
+                    },
+                    error: function (xhr) {
+                        // Trata erros de validação
+                        const errors = xhr.responseJSON.errors;
+                        for (const field in errors) {
+                            $(`#${field}`).addClass('is-invalid');
+                            $(`#${field}-error`).text(errors[field][0]);
+                        }
+                    }
+                });
             });
         });
-
-        // Botão voltar
-        voltarBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            formContainer.style.display = 'none';
-            setoresContainer.style.display = 'block';
-        });
-
-        // Envio do formulário
-        chamadoForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const formData = {
-                setor: setorSelecionadoText.textContent.replace('Setor: ', ''),
-                assunto: document.getElementById('assunto').value,
-                descricao: document.getElementById('descricao').value,
-                urgencia: document.getElementById('urgencia').value
-            };
-
-            // Aqui você pode enviar os dados para o backend
-            console.log('Dados do chamado:', formData);
-
-            // Exemplo de feedback para o usuário
-            alert('Chamado enviado com sucesso!');
-            chamadoForm.reset();
-            formContainer.style.display = 'none';
-            setoresContainer.style.display = 'block';
-        });
-    });
-</script>
-
-<body>
-    <div class="container">
-        <h2 class="text-center my-4">Abertura de Chamado</h2>
-
-        <!-- Tela inicial - Setores -->
-        <div id="setores-container">
-            <h4 class="text-center mb-4">Selecione o setor:</h4>
-            <div class="setores-wrapper">
-                <div class="setores-grid" id="setores-grid">
-                    <!-- Os setores serão adicionados via JavaScript -->
-                </div>
-            </div>
-        </div>
-        <!-- Formulário (inicialmente oculto) -->
-        <div id="form-container" style="display: none;">
-            <button class="btn btn-outline-secondary mb-3" id="voltar-btn">
-                <i class="bi bi-arrow-left"></i> Voltar
-            </button>
-            <h4 id="setor-selecionado-text" class="mb-4"></h4>
-
-            <form id="chamado-form">
-                <!-- Seus campos de formulário aqui -->
-            </form>
-        </div>
-    </div>
-</body>
-
-</html>
-{% endblock 'body' %}
+    </script>
+    {% endblock 'body' %}

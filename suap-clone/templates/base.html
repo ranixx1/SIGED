@@ -237,8 +237,8 @@
                             <span class="sidebar-text">Central de serviços</span>
                         </a>
                         <div id="submenu-central" class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
-                            <a href="chamados"class="submenu-item"> Abrir Chamado</a>
-                            <a href="chamado.html"class="submenu-item"> Meus Chamados</a>
+                            <a href="{% url 'criar_chamado' %}" class="submenu-item">Abrir Chamado</a>
+                            <a href="{% url 'ver_chamados' %}" class="submenu-item">Meus Chamados</a>
                         </div>
                         <a href="{% url 'logout' %}" class="sidebar-item text-white hover:text-white">
                             <span class="material-icons">logout</span>

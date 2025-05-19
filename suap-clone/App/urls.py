@@ -8,4 +8,10 @@ urlpatterns = [
     path('cards/editar/<int:id>/', views.editar_card, name='editar_card'),
     path('cards/deletar/<int:id>/', views.deletar_card, name='deletar_card'),
     path('chamados/', views.chamados, name='chamados'),
+    path('chamado/criar/', views.criar_chamado, name='criar_chamado'),
+    path('meus-chamados/', views.ver_chamados, name='ver_chamados'),
+    path('meus-chamados/<int:id>/', views.detalhe_chamado, name='detalhe_chamado'),
+    
+
+
 ]
