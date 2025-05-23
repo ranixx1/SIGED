@@ -70,18 +70,16 @@ def criar_chamado(request):
             chamado.criado_por = request.user
             chamado.save()
             
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({
-                    'success': True,
-                    'message': 'Chamado criado com sucesso!'
-                })
-            return redirect('sucesso')
-        
-        elif request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
-                'success': False,
-                'errors': form.errors
-            }, status=400)
+                'success': True,
+                'message': 'Chamado criado com sucesso!'
+            })
+        
+        # Se o formulário for inválido
+        return JsonResponse({
+            'success': False,
+            'errors': form.errors
+        }, status=400)
 
     # GET request - renderiza o template normalmente
     return render(request, 'App/pages/central/chamado.html')
