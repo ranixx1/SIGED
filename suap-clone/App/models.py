@@ -25,11 +25,13 @@ class Chamado(models.Model):
     ]
 
     SETOR_CHOICES = [
-        ('ti', 'TI'),
-        ('rh', 'RH'),
-        ('financeiro', 'Financeiro'),
-        ('outros', 'Outros'),
-    ]
+    ('ti', 'TI'),
+    ('rh', 'RH'),
+    ('financeiro', 'Financeiro'),
+    ('manutencao', 'Manutenção'),
+    ('limpeza', 'Limpeza'),
+    ('outros', 'Outros'),
+]
 
     criado_por = models.ForeignKey(User, on_delete=models.CASCADE)
     assunto = models.CharField(max_length=200)
