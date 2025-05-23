@@ -230,17 +230,17 @@
 
         }
     </style>
-
+    
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Setores disponíveis com ícones
             const setores = [
-                { id: 'ti', nome: 'Tecnologia da Informação', icon: 'bi-laptop' },
-                { id: 'rh', nome: 'Recursos Humanos', icon: 'bi-people' },
+                { id: 'ti', nome: 'TI', icon: 'bi-laptop' },
+                { id: 'rh', nome: 'RH', icon: 'bi-people' },
                 { id: 'financeiro', nome: 'Financeiro', icon: 'bi-cash-stack' },
                 { id: 'manutencao', nome: 'Manutenção', icon: 'bi-tools' },
                 { id: 'limpeza', nome: 'Limpeza', icon: 'bi-trash' },
-                { id: 'outro', nome: 'Outro', icon: 'bi-grid' }
+                { id: 'outros', nome: 'Outros', icon: 'bi-grid' }
             ];
 
             const setoresGrid = document.getElementById('setores-grid');
@@ -272,7 +272,7 @@
                     const setor = setores.find(s => s.id === setId);
 
                     // Preenche o campo hidden do setor
-                    setorInput.value = setor.nome;
+                    setorInput.value = setor.id;
 
                     // Mostrar formulário
                     setorSelecionadoText.textContent = `Setor: ${setor.nome}`;
@@ -288,69 +288,98 @@
                 setoresContainer.style.display = 'block';
             });
 
-            // Envio do formulário
-            chamadoForm.addEventListener('submit', function (e) {
+            // Envio do formulário com tratamento robusto de erros
+            chamadoForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
 
                 // Validação básica
-                if (!setorInput.value || !document.getElementById('assunto').value ||
-                    !document.getElementById('descricao').value ||
-                    !document.getElementById('urgencia').value) {
+                const assunto = document.getElementById('assunto').value;
+                const descricao = document.getElementById('descricao').value;
+                const urgencia = document.getElementById('urgencia').value;
+
+                if (!setorInput.value || !assunto || !descricao || !urgencia) {
                     alert('Por favor, preencha todos os campos!');
                     return;
                 }
 
-                // Envia o formulário
-                fetch(chamadoForm.action, {
-                    method: 'POST',
-                    body: new FormData(chamadoForm),
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Chamado enviado com sucesso!');
-                            chamadoForm.reset();
-                            formContainer.style.display = 'none';
-                            setoresContainer.style.display = 'block';
-                        } else {
-                            alert('Ocorreu um erro ao enviar o chamado.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Ocorreu um erro ao enviar o chamado.');
-                    });
-            });
-            $('#chamado-form').submit(function (e) {
-                e.preventDefault();
-                const formData = $(this).serialize();
+                if (assunto.length < 10) {
+                    alert('O assunto deve ter pelo menos 10 caracteres.');
+                    return;
+                }
 
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                    success: function (response) {
-                        if (response.success) {
-                            // Sucesso - exibe mensagem e reseta o form
-                            alert(response.message);
-                            $('#chamado-form')[0].reset();
-                        }
-                    },
-                    error: function (xhr) {
-                        // Trata erros de validação
-                        const errors = xhr.responseJSON.errors;
-                        for (const field in errors) {
-                            $(`#${field}`).addClass('is-invalid');
-                            $(`#${field}-error`).text(errors[field][0]);
-                        }
+                if (descricao.length < 20) {
+                    alert('A descrição deve ter pelo menos 20 caracteres.');
+                    return;
+                }
+
+                try {
+                    const formData = new FormData(chamadoForm);
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    if (!csrfToken) {
+                        throw new Error('Token CSRF não encontrado');
                     }
-                });
+
+                    const response = await fetch(chamadoForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrfToken
+                        }
+                    });
+
+                    // Verifica se a resposta é JSON
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        const text = await response.text();
+                        console.error('Resposta não-JSON:', text);
+                        throw new Error('Resposta do servidor não está em formato JSON');
+                    }
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || `Erro no servidor: ${response.status}`);
+                    }
+
+                    if (data.success) {
+                        alert('Chamado enviado com sucesso!');
+                        chamadoForm.reset();
+                        formContainer.style.display = 'none';
+                        setoresContainer.style.display = 'block';
+                    } else {
+                        showFormErrors(data.errors || {});
+                    }
+                } catch (error) {
+                    console.error('Erro completo:', error);
+
+                    // Mensagens mais amigáveis para diferentes tipos de erro
+                    if (error.message.includes('JSON')) {
+                        alert('Erro no formato da resposta do servidor. Por favor, tente novamente.');
+                    } else if (error.message.includes('CSRF')) {
+                        alert('Problema de segurança detectado. Por favor, recarregue a página e tente novamente.');
+                    } else {
+                        alert(`Erro ao enviar chamado: ${error.message}`);
+                    }
+                }
             });
+
+            // Função para mostrar erros de formulário
+            function showFormErrors(errors) {
+                if (!errors || Object.keys(errors).length === 0) {
+                    alert('Ocorreu um erro desconhecido. Por favor, tente novamente.');
+                    return;
+                }
+
+                let errorMessage = 'Por favor, corrija os seguintes erros:\n';
+                for (const field in errors) {
+                    // Verifica se errors[field] é um array antes de usar join()
+                    const errorList = Array.isArray(errors[field]) ? errors[field] : [errors[field]];
+                    errorMessage += `- ${field}: ${errorList.join(', ')}\n`;
+                }
+                alert(errorMessage);
+            }
         });
     </script>
     {% endblock 'body' %}
