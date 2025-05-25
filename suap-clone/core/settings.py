@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from django.contrib.messages import constants as messages
 from pathlib import Path, os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne', 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'usuarios',
     'App',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -70,8 +72,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
-
-
+# Adicione esta linha para o ASGI Application
+ASGI_APPLICATION = 'core.asgi.application' 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer', 
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)], # Onde o Redis está rodando
+        },
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -128,13 +138,12 @@ MEDIA_URL ='/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-#Messages
-#from django.contrib.messages import constants
-
-#MESSAGE_TAGS = {
-    #constants.SUCCESS: 'bg-green-50 text-green-700',
-    #constants.ERROR: 'bg-red-50 text-red-700'
-#}
-
+MESSAGE_TAGS = {
+    messages.DEBUG: 'bg-blue-100 text-blue-800 p-2 rounded-lg',
+    messages.INFO: 'bg-blue-100 text-blue-800 p-2 rounded-lg',
+    messages.SUCCESS: 'bg-green-100 text-green-800 p-2 rounded-lg',
+    messages.WARNING: 'bg-yellow-100 text-yellow-800 p-2 rounded-lg',
+    messages.ERROR: 'bg-red-100 text-red-800 p-2 rounded-lg',
+}
 LOGIN_URL = '/usuarios/login/'  # Ou o nome correto da sua rota de login
 LOGIN_REDIRECT_URL = '/home/'  # ou o nome da view pós-login
