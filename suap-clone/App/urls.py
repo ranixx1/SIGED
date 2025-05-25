@@ -12,7 +12,7 @@ urlpatterns = [
     path('meus-chamados/', views.ver_chamados, name='ver_chamados'),
     path('meus-chamados/<int:id>/', views.detalhe_chamado, name='detalhe_chamado'),
     path('chat/<str:room_name>/', login_required(views.chat_room), name='chat_room'),
-
+    path('dashboard-admin/', views.dashboard_admin, name='dashboard_admin'),    
 
 
 ]
