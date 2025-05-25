@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Card, Chamado, AtualizacaoChamado
+from .models import Card, Chamado, AtualizacaoChamado, ChatMessage
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
@@ -45,3 +45,10 @@ class AtualizacaoChamadoAdmin(admin.ModelAdmin):
     list_filter = ('status_novo',)
     search_fields = ('chamado__assunto', 'mensagem')
     readonly_fields = ('chamado', 'responsavel', 'status_anterior', 'status_novo', 'data_atualizacao')
+
+@admin.register(ChatMessage)
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = ('room_name', 'user', 'message', 'timestamp')
+    list_filter = ('room_name', 'timestamp')
+    search_fields = ('user__username', 'message')
+    readonly_fields = ('room_name', 'user', 'message', 'timestamp') # Mensagens do chat geralmente são readonly no admin

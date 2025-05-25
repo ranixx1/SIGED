@@ -62,3 +62,4 @@ class ChamadoForm(forms.ModelForm):
         if len(descricao) < 20:
             raise forms.ValidationError("A descrição deve ter pelo menos 20 caracteres.")
         return descricao
+    
