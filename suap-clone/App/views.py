@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
-from .models import Card, Chamado
+from .models import Card, Chamado, ChatMessage 
 from .forms import CardForm, ChamadoForm
 
 
@@ -89,11 +89,20 @@ def ver_chamados(request):
     return render(request, 'App/pages/central/ver_chamados.html', {'chamados': chamados})
 
 
-# views.py
 @login_required
 def detalhe_chamado(request, id):
     chamado = get_object_or_404(Chamado, id=id)  
     return render(request, 'App/pages/central/detalhe_chamado.html', {
         'chamado': chamado,
 
+    })
+
+# VIEW PARA O CHAT
+@login_required
+def chat_room(request, room_name):
+    # Carrega as últimas 50 mensagens para a sala específica
+    messages = ChatMessage.objects.filter(room_name=room_name).order_by('timestamp')[:50]
+    return render(request, 'App/pages/chat/chat_room.html', {
+        'room_name': room_name,
+        'messages': messages,
     })
