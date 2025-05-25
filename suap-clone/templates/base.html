@@ -215,7 +215,7 @@
                     <span class="material-icons">home</span>
                     <span class="sidebar-text">Página Inicial</span>
                 </a>
-                
+
                 {% if request.user.is_authenticated and request.user.is_staff %}
                 <a href="{% url 'dashboard_admin' %}" class="sidebar-item">
                     <span class="material-icons">dashboard</span>
