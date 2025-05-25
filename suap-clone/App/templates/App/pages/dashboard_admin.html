@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'body' %}
+<div class="max-w-7xl mx-auto p-6">
+    <h1 class="text-4xl font-bold text-gray-800 mb-8">Dashboard Administrativo</h1>
+
+    <!-- Cards principais -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        
+        <!-- Card: Total de Chamados -->
+        <div class="bg-white border border-gray-200 rounded-2xl shadow hover:shadow-lg transition p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-700">Total de Chamados</h2>
+                <div class="p-2 bg-green-100 rounded-full">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 17v-6h13M5 7l4-4m0 0l4 4m-4-4v18" />
+                    </svg>
+                </div>
+            </div>
+            <p class="text-4xl font-bold text-green-600">{{ total_chamados }}</p>
+        </div>
+
+        <!-- Card: Chamados Abertos -->
+        <div class="bg-white border border-gray-200 rounded-2xl shadow hover:shadow-lg transition p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-700">Chamados Abertos</h2>
+                <div class="p-2 bg-yellow-100 rounded-full">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 8v4l3 3m6 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <p class="text-4xl font-bold text-yellow-600">{{ chamados_abertos }}</p>
+        </div>
+
+        <!-- Card: Chamados Resolvidos -->
+        <div class="bg-white border border-gray-200 rounded-2xl shadow hover:shadow-lg transition p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-700">Chamados Resolvidos</h2>
+                <div class="p-2 bg-blue-100 rounded-full">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+            </div>
+            <p class="text-4xl font-bold text-blue-600">{{ chamados_resolvidos }}</p>
+        </div>
+
+    </div>
+
+    <!-- Últimas mensagens do chat -->
+    <div class="bg-white border border-gray-200 rounded-2xl shadow p-6">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Últimas Mensagens do Chat</h2>
+        {% if ultimas_mensagens_chat %}
+            <ul class="space-y-4">
+                {% for message in ultimas_mensagens_chat %}
+                    <li class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="font-semibold text-gray-900">{{ message.user.username }}</span>
+                                <span class="text-sm text-gray-500">({{ message.room_name }})</span>
+                            </div>
+                            <span class="text-xs text-gray-400">{{ message.timestamp|date:"d/m/Y H:i" }}</span>
+                        </div>
+                        <div class="mt-2 text-gray-700 text-sm">
+                            {{ message.message }}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-gray-500">Nenhuma mensagem recente no chat.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
