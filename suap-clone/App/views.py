@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from .models import Card, Chamado, ChatMessage 
 from .forms import CardForm, ChamadoForm
-
+from django.contrib.admin.views.decorators import staff_member_required
 
 def home(request):
     cards = Card.objects.all().order_by('-id')
@@ -106,3 +106,20 @@ def chat_room(request, room_name):
         'room_name': room_name,
         'messages': messages,
     })
+
+@staff_member_required # Apenas usuários com is_staff=True podem acessar
+def dashboard_admin(request):
+    total_chamados = Chamado.objects.count()
+    chamados_abertos = Chamado.objects.filter(status='aberto').count()
+    chamados_resolvidos = Chamado.objects.filter(status='resolvido').count()
+    
+    # Exemplo de dados mais complexos (últimas mensagens do chat)
+    ultimas_mensagens_chat = ChatMessage.objects.order_by('-timestamp')[:10]
+
+    context = {
+        'total_chamados': total_chamados,
+        'chamados_abertos': chamados_abertos,
+        'chamados_resolvidos': chamados_resolvidos,
+        'ultimas_mensagens_chat': ultimas_mensagens_chat,
+    }
+    return render(request, 'App/pages/dashboard_admin.html', context)
