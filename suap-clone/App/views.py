@@ -12,7 +12,7 @@ def home(request):
     cards = Card.objects.all().order_by('-id')
     return render(request, 'App/home.html', {'cards': cards})
 
-@login_required
+@staff_member_required 
 def criar_card(request):
     if request.method == 'POST':
         form = CardForm(request.POST)
@@ -30,7 +30,7 @@ def criar_card(request):
     
     return render(request, 'App/criar_card.html', {'form': form})
 
-@login_required
+@staff_member_required 
 @require_http_methods(["GET", "POST"])
 def editar_card(request, id):
     card = get_object_or_404(Card, id=id)
@@ -48,7 +48,7 @@ def editar_card(request, id):
     
     return render(request, 'App/editar_card.html', {'form': form, 'card': card})
 
-@login_required
+@staff_member_required 
 @require_http_methods(["POST"])
 def deletar_card(request, id):
     card = get_object_or_404(Card, id=id)
