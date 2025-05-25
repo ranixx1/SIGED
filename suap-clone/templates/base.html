@@ -1,118 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SIGED</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <style>
-            .sidebar-item {
-                @apply flex items-center gap-3 text-gray-600 hover:text-[#5a7a3a] transition p-2 rounded-lg;
-            }
-    
-            .sidebar-item.active {
-                @apply bg-[#6c8a4e]/20 text-[#5a7a3a] font-medium;
-            }
-    
-            .submenu-item {
-                @apply text-gray-500 hover:text-[#5a7a3a] transition p-2 rounded-lg text-sm;
-            }
-    
-            .card {
-                @apply bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow;
-            }
-    
-            .card-header {
-                @apply bg-[#5a7a3a] text-white px-4 py-3 font-semibold border-b border-[#4a6a2a]/30;
-            }
-    
-            .card-body {
-                @apply p-4 text-gray-700;
-            }
-    
-            .search-input {
-                @apply pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5a7a3a]/50 focus:border-transparent text-gray-700 placeholder-gray-400;
-            }
-    
-            .main-bg {
-                background-color: #f8faf7;
-            }
-        </style>
-        <script>
-            // Funções para controle da sidebar
-            function toggleSubmenu(id) {
-                const el = document.getElementById(id);
-                el.classList.toggle("hidden");
-                const icon = document.querySelector(`[data-submenu="${id}"]`);
-                icon.textContent = icon.textContent === 'chevron_right' ? 'expand_more' : 'chevron_right';
-            }
-    
-            function toggleSidebar() {
-                const sidebar = document.getElementById("sidebar");
-                const isExpanded = sidebar.classList.contains("w-64");
-    
-                sidebar.classList.toggle("w-64", !isExpanded);
-                sidebar.classList.toggle("w-20", isExpanded);
-    
-                // Oculta ou mostra textos da sidebar
-                document.querySelectorAll(".sidebar-text").forEach(el => {
-                    el.classList.toggle("hidden", isExpanded);
-                });
-                document.getElementById("notification-icon-collapsed").classList.toggle("hidden", !isExpanded);
-                document.getElementById("search-box").classList.toggle("hidden", !isExpanded);
-    
-    
-                // Fecha submenus ao reduzir
-                document.querySelectorAll(".submenu").forEach(el => {
-                    if (isExpanded) return;
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGED</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .sidebar-item {
+            @apply flex items-center gap-3 text-gray-600 hover:text-[#5a7a3a] transition p-2 rounded-lg;
+        }
+
+        .sidebar-item.active {
+            @apply bg-[#6c8a4e]/20 text-[#5a7a3a] font-medium;
+        }
+
+        .submenu-item {
+            @apply text-gray-500 hover:text-[#5a7a3a] transition p-2 rounded-lg text-sm;
+        }
+
+        .card {
+            @apply bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow;
+        }
+
+        .card-header {
+            @apply bg-[#5a7a3a] text-white px-4 py-3 font-semibold border-b border-[#4a6a2a]/30;
+        }
+
+        .card-body {
+            @apply p-4 text-gray-700;
+        }
+
+        .search-input {
+            @apply pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5a7a3a]/50 focus:border-transparent text-gray-700 placeholder-gray-400;
+        }
+
+        .main-bg {
+            background-color: #f8faf7;
+        }
+    </style>
+    <script>
+        // Funções para controle da sidebar
+        function toggleSubmenu(id) {
+            const el = document.getElementById(id);
+            el.classList.toggle("hidden");
+            const icon = document.querySelector(`[data-submenu="${id}"]`);
+            icon.textContent = icon.textContent === 'chevron_right' ? 'expand_more' : 'chevron_right';
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const isExpanded = sidebar.classList.contains("w-64");
+
+            sidebar.classList.toggle("w-64", !isExpanded); // Se expandido, vai para w-20; se colapsado, vai para w-64
+            sidebar.classList.toggle("w-20", isExpanded); // Se expandido, vai para w-20; se colapsado, vai para w-64
+
+            // Oculta ou mostra textos da sidebar (itens do menu)
+            document.querySelectorAll(".sidebar-text").forEach(el => {
+                el.classList.toggle("hidden", isExpanded);
+            });
+
+            // Controla o logo (SIGED)
+            document.getElementById("sidebar-logo-expanded").classList.toggle("hidden", isExpanded);
+            document.getElementById("sidebar-logo-collapsed").classList.toggle("hidden", !isExpanded);
+
+            // Controla os ícones de notificação
+            document.getElementById("notification-icon-expanded").classList.toggle("hidden", isExpanded);
+            document.getElementById("notification-icon-collapsed").classList.toggle("hidden", !isExpanded);
+
+            // Controla a área de usuário (avatar e nome)
+
+            document.getElementById("user-info-expanded").classList.toggle("hidden", isExpanded);
+            document.getElementById("user-info-collapsed").classList.toggle("hidden", !isExpanded);
+
+            // Controla a barra de pesquisa
+            document.getElementById("search-box-expanded").classList.toggle("hidden", isExpanded);
+            document.getElementById("search-box-collapsed").classList.toggle("hidden", !isExpanded);
+
+            // Fecha submenus ao reduzir
+            document.querySelectorAll(".submenu").forEach(el => {
+                if (isExpanded) { // Apenas fecha se estava expandido
                     el.classList.add("hidden");
-                });
-    
-                // Oculta ou mostra o título e ícone do botão
-                document.getElementById("sidebar-title").classList.toggle("hidden", isExpanded);
-                document.getElementById("toggleBtn").innerHTML = isExpanded ?
-                    '<span class="material-icons">chevron_left</span>' :
-                    '<span class="material-icons">chevron_right</span>';
-            }
-    
-            // Inicialização do Sortable e botão de exclusão
-            document.addEventListener('DOMContentLoaded', function () {
-                new Sortable(document.getElementById('mural'), {
-                    animation: 150,
-                    handle: '.move-handle',
-                    onEnd: function (evt) {
-                        console.log('Item movido da posição', evt.oldIndex, 'para', evt.newIndex);
+                    // Também resetar os ícones de submenu, se houver
+                    const submenuIcon = document.querySelector(`[data-submenu="${el.id}"]`);
+                    if (submenuIcon) {
+                        submenuIcon.textContent = 'chevron_right'; // Garante que a seta esteja para a direita
+                    }
+                }
+            });
+
+            // Ajusta o ícone do botão de toggle
+            document.getElementById("toggleBtn").innerHTML = isExpanded ?
+                '<span class="material-icons text-sm">chevron_right</span>' : // Seta para a direita: indica "expandir"
+                '<span class="material-icons text-sm">chevron_left</span>';  // Seta para a esquerda: indica "colapsar"
+        }
+
+        // Inicialização do Sortable e botão de exclusão
+        document.addEventListener('DOMContentLoaded', function () {
+            new Sortable(document.getElementById('mural'), {
+                animation: 150,
+                handle: '.move-handle',
+                onEnd: function (evt) {
+                    console.log('Item movido da posição', evt.oldIndex, 'para', evt.newIndex);
+                }
+            });
+
+            document.querySelectorAll('.delete-card').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const cardId = button.closest('.card').getAttribute('data-card-id');
+                    if (confirm('Deseja realmente remover este item?')) {
+                        fetch(`{% url 'deletar_card' 0 %}`.replace('0', cardId), {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}',
+                                'Content-Type': 'application/json',
+                            },
+                        }).then(response => {
+                            if (response.ok) {
+                                button.closest('.card').remove();
+                            }
+                        });
                     }
                 });
-    
-                document.querySelectorAll('.delete-card').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const cardId = button.closest('.card').getAttribute('data-card-id');
-                        if (confirm('Deseja realmente remover este item?')) {
-                            fetch(`{% url 'deletar_card' 0 %}`.replace('0', cardId), {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRFToken': '{{ csrf_token }}',
-                                    'Content-Type': 'application/json',
-                                },
-                            }).then(response => {
-                                if (response.ok) {
-                                    button.closest('.card').remove();
-                                }
-                            });
-                        }
-                    });
-                });
             });
-        </script>
+        });
+    </script>
     {% block 'head' %}{% endblock 'head' %}
 </head>
+
 <body>
+
     <body class="flex min-h-screen bg-white font-sans text-gray-800">
 
         <!-- Sidebar -->
@@ -131,135 +153,149 @@
                         <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>
                 </div>
-    
+
                 <!-- Ícone de notificação no modo colapsado -->
-                <div class="relative mt-4 hidden" id="notification-icon-collapsed">
-                    <button class="text-white hover:text-white relative">
+                <div id="notification-icon-collapsed" class="relative hidden"> <button
+                        class="text-white hover:text-white relative">
                         <span class="material-icons">notifications</span>
                         <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>
                 </div>
             </div>
-            <div class="mb-6">
-                <!-- Área do usuário -->
-                <div class="flex items-center justify-between mb-4 p-2 bg-[#3a5a2a]/50 rounded-lg">
+            </div> {# Fim da div do cabeçalho com logo e notificações #}
+
+            <div id="user-and-search-area" class="mb-6">
+                <div id="user-info-expanded"
+                    class="flex items-center justify-between mb-4 p-2 bg-[#3a5a2a]/50 rounded-lg">
                     <div class="flex items-center gap-3">
-                        <!-- Avatar "mudo" (sem letras quando sidebar fechada) -->
                         <div
                             class="w-10 h-10 bg-[#3a5a2a] rounded-full flex items-center justify-center text-white font-bold overflow-hidden">
                             {% if user.is_authenticated %}
-                            <span class="sidebar-text">{{ user.first_name|first }}{{ user.last_name|first }}</span>
+                            <span class="sidebar-text">{{ user.first_name|first|upper }}{{ user.last_name|first|upper
+                                }}</span>
                             {% else %}
                             <span class="sidebar-text">?</span>
                             {% endif %}
                         </div>
-    
-                        <!-- Texto do usuário (nome e cargo) -->
                         <div class="text-sm sidebar-text">
-                            <div class="font-medium">Ranilton Costa</div>
+                            {% if user.is_authenticated %}
+                            <div class="font-medium">{{ user.get_full_name|default:user.username }}</div>
                             <div class="text-xs text-gray-300">Aluno</div>
+                            {% else %}
+                            <div class="font-medium">Visitante</div>
+                            <div class="text-xs text-gray-300">Não Logado</div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-    
-    
-                <!-- Barra de pesquisa minimalista -->
-                <div class="relative mb-6">
-                    <div class="flex items-center border-b border-[#3a5a2a] pb-2">
-                        <span class="material-icons text-gray-300 mr-2">search</span>
-                        <input type="text" placeholder="Pesquisar..."
-                            class="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none">
+                <div id="user-info-collapsed" class="flex items-center justify-center py-2 hidden">
+                    <div
+                        class="w-10 h-10 bg-[#3a5a2a] rounded-full flex items-center justify-center text-white font-bold overflow-hidden">
+                        <span class="material-icons">account_circle</span>
                     </div>
                 </div>
-    
-                <!-- Menu de navegação -->
-                <nav class="flex flex-col gap-1 flex-1">
-    
-                    <nav class="flex flex-col gap-1 flex-1">
-                        <a href="{% url 'home' %}" class="sidebar-item active">
-                            <span class="material-icons">home</span>
-                            <span class="sidebar-text">Página Inicial</span>
-                        </a>
-    
-                        <div>
-                            <a href="#" onclick="toggleSubmenu('submenu-docs')" class="sidebar-item">
-                                <span class="material-icons">description</span>
-                                <span class="sidebar-text">Documentos</span>
-                            </a>
-                            <div id="submenu-docs"
-                                class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
-                                <a href="#" class="submenu-item">Documentos Recebidos</a>
-                                <a href="#" class="submenu-item">Documentos Enviados</a>
-                                <a href="#" class="submenu-item">Processos</a>
-                            </div>
-                        </div>
-    
-                        <div>
-                            <a href="#" onclick="toggleSubmenu('submenu-ensino')" class="sidebar-item">
-                                <span class="material-icons">school</span>
-                                <span class="sidebar-text">Ensino</span>
-                            </a>
-                            <div id="submenu-ensino"
-                                class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
-                                <a href="#" class="submenu-item">Boletins</a>
-                                <a href="#" class="submenu-item">Minhas disciplinas</a>
-                                <a href="#" class="submenu-item">Dados do aluno</a>
-                                <a href="#" class="submenu-item">Horários de aula</a>
-                            </div>
-                        </div>
-    
-                        <div>
-                            <a href="#" onclick="toggleSubmenu('submenu-pesquisa')" class="sidebar-item">
-                                <span class="material-icons">science</span>
-                                <span class="sidebar-text">Pesquisa</span>
-                            </a>
-                            <div id="submenu-pesquisa"
-                                class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
-                                <a href="#" class="submenu-item">Editais</a>
-                                <a href="#" class="submenu-item">Projetos</a>
-                                <a href="#" class="submenu-item">Laboratórios</a>
-                            </div>
-                        </div>
-    
-                        <div>
-                            <a href="#" onclick="toggleSubmenu('submenu-extensao')" class="sidebar-item">
-                                <span class="material-icons">public</span>
-                                <span class="sidebar-text">Extensão</span>
-                            </a>
-                            <div id="submenu-extensao"
-                                class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
-                                <a href="#" class="submenu-item">Convênios</a>
-                                <a href="#" class="submenu-item">Estágios</a>
-                                <a href="#" class="submenu-item">Projetos</a>
-                            </div>
-                        </div>
-    
-                        <a href="#"onclick="toggleSubmenu('submenu-central')"class="sidebar-item">
-                            <span class="material-icons">work</span>
-                            <span class="sidebar-text">Central de serviços</span>
-                        </a>
-                        <div id="submenu-central" class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
-                            <a href="{% url 'criar_chamado' %}" class="submenu-item">Abrir Chamado</a>
-                            <a href="{% url 'ver_chamados' %}" class="submenu-item">Meus Chamados</a>
-                        </div>
-
-                        <div>
-                            <a href="#" onclick="toggleSubmenu('submenu-suporte')" class="sidebar-item">
-                                <span class="material-icons">support</span>
-                                <span class="sidebar-text">Suporte</span>
-                            </a>
-                            <div id="submenu-suporte"
-                                class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
-                                <a href="#" class="submenu-item">chat</a>
-                                <a href="#" class="submenu-item">Contato</a>
-                                <a href="#" class="submenu-item">Manuais</a>
-                            </div>
-                        </div>
-                        <a href="{% url 'logout' %}" class="sidebar-item text-white hover:text-white">
-                            <span class="material-icons">logout</span>
-                            <span class="sidebar-text">Sair</span>
-                        </a>
             </div>
+
+            <div id="search-box-expanded" class="relative mb-6">
+                <div class="flex items-center border-b border-[#3a5a2a] pb-2">
+                    <span class="material-icons text-gray-300 mr-2">search</span>
+                    <input type="text" placeholder="Pesquisar..."
+                        class="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none">
+                </div>
+            </div>
+            <div id="search-box-collapsed" class="relative mt-4 hidden">
+                <button class="text-white hover:text-white relative w-full flex justify-center">
+                    <span class="material-icons">search</span>
+                </button>
+            </div>
+            </div>
+
+            <nav class="flex flex-col gap-1 flex-1">
+                <a href="{% url 'home' %}" class="sidebar-item active">
+                    <span class="material-icons">home</span>
+                    <span class="sidebar-text">Página Inicial</span>
+                </a>
+
+                <div>
+                    <a href="#" onclick="toggleSubmenu('submenu-docs')" class="sidebar-item">
+                        <span class="material-icons">description</span>
+                        <span class="sidebar-text">Documentos</span>
+                    </a>
+                    <div id="submenu-docs"
+                        class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
+                        <a href="#" class="submenu-item">Documentos Recebidos</a>
+                        <a href="#" class="submenu-item">Documentos Enviados</a>
+                        <a href="#" class="submenu-item">Processos</a>
+                    </div>
+                </div>
+
+                <div>
+                    <a href="#" onclick="toggleSubmenu('submenu-ensino')" class="sidebar-item">
+                        <span class="material-icons">school</span>
+                        <span class="sidebar-text">Ensino</span>
+                    </a>
+                    <div id="submenu-ensino"
+                        class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
+                        <a href="#" class="submenu-item">Boletins</a>
+                        <a href="#" class="submenu-item">Minhas disciplinas</a>
+                        <a href="#" class="submenu-item">Dados do aluno</a>
+                        <a href="#" class="submenu-item">Horários de aula</a>
+                    </div>
+                </div>
+
+                <div>
+                    <a href="#" onclick="toggleSubmenu('submenu-pesquisa')" class="sidebar-item">
+                        <span class="material-icons">science</span>
+                        <span class="sidebar-text">Pesquisa</span>
+                    </a>
+                    <div id="submenu-pesquisa"
+                        class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
+                        <a href="#" class="submenu-item">Editais</a>
+                        <a href="#" class="submenu-item">Projetos</a>
+                        <a href="#" class="submenu-item">Laboratórios</a>
+                    </div>
+                </div>
+
+                <div>
+                    <a href="#" onclick="toggleSubmenu('submenu-extensao')" class="sidebar-item">
+                        <span class="material-icons">public</span>
+                        <span class="sidebar-text">Extensão</span>
+                    </a>
+                    <div id="submenu-extensao"
+                        class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
+                        <a href="#" class="submenu-item">Convênios</a>
+                        <a href="#" class="submenu-item">Estágios</a>
+                        <a href="#" class="submenu-item">Projetos</a>
+                    </div>
+                </div>
+
+                <a href="#" onclick="toggleSubmenu('submenu-central')" class="sidebar-item">
+                    <span class="material-icons">work</span>
+                    <span class="sidebar-text">Central de serviços</span>
+                </a>
+                <div id="submenu-central"
+                    class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
+                    <a href="{% url 'criar_chamado' %}" class="submenu-item">Abrir Chamado</a>
+                    <a href="{% url 'ver_chamados' %}" class="submenu-item">Meus Chamados</a>
+                </div>
+
+                <div>
+                    <a href="#" onclick="toggleSubmenu('submenu-suporte')" class="sidebar-item">
+                        <span class="material-icons">support</span>
+                        <span class="sidebar-text">Suporte</span>
+                    </a>
+                    <div id="submenu-suporte"
+                        class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
+                        <a href="{% url 'chat_room' 'geral' %}" class="submenu-item">Chat</a>
+                        <a href="#" class="submenu-item">Contato</a>
+                        <a href="#" class="submenu-item">Manuais</a>
+                    </div>
+                </div>
+                <a href="{% url 'logout' %}" class="sidebar-item text-white hover:text-white">
+                    <span class="material-icons">logout</span>
+                    <span class="sidebar-text">Sair</span>
+                </a>
+                </div>
             </nav>
             <!-- Botão de colapsar/expandir -->
             <button onclick="toggleSidebar()" id="toggleBtn"
@@ -267,7 +303,8 @@
                 <span class="material-icons text-sm">chevron_left</span>
             </button>
         </aside>
-    
-    {% block 'body' %}{% endblock 'body' %}
-</body>
+
+        {% block 'body' %}{% endblock 'body' %}
+    </body>
+
 </html>
