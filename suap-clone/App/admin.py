@@ -1,3 +1,5 @@
+# App/admin.py
+
 from django.contrib import admin
 from .models import Card, Chamado, AtualizacaoChamado, ChatMessage
 
@@ -16,10 +18,10 @@ class AtualizacaoInline(admin.TabularInline):
 
 @admin.register(Chamado)
 class ChamadoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'assunto', 'criado_por', 'setor', 'status', 'urgencia', 'data_criacao')
-    list_filter = ('status', 'urgencia', 'setor')
-    search_fields = ('assunto', 'descricao', 'criado_por__username')
-    readonly_fields = ('data_criacao',)
+    list_display = ('id', 'assunto', 'criado_por', 'setor', 'status', 'urgencia', 'data_criacao', 'chat_room_name') # <--- NOVO CAMPO AQUI
+    list_filter = ('status', 'urgencia', 'setor', 'chat_room_name') # Adicione chat_room_name ao filtro
+    search_fields = ('assunto', 'descricao', 'criado_por__username', 'chat_room_name') # Adicione à busca
+    readonly_fields = ('data_criacao', 'chat_room_name',) # chat_room_name deve ser somente leitura aqui
     inlines = [AtualizacaoInline]
     
     def get_queryset(self, request):
@@ -51,4 +53,4 @@ class ChatMessageAdmin(admin.ModelAdmin):
     list_display = ('room_name', 'user', 'message', 'timestamp')
     list_filter = ('room_name', 'timestamp')
     search_fields = ('user__username', 'message')
-    readonly_fields = ('room_name', 'user', 'message', 'timestamp') # Mensagens do chat geralmente são readonly no admin
+    readonly_fields = ('room_name', 'user', 'message', 'timestamp')
