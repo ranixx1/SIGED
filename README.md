@@ -128,7 +128,3 @@ Acesse o projeto no navegador:
 
 ---
 
-## 📬 Contato
-Se tiver dúvidas, sugestões ou quiser colaborar, sinta-se à vontade para abrir uma issue ou entrar em contato!
-
----
