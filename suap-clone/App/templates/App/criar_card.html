@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 
 {% block 'body' %}
-<div class="min-h-screen flex items-center justify-center p-4"> {# Adiciona min-h-screen, flexbox para centralizar #}
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden p-8 md:p-12"> {# Card principal #}
+{# Esta é a área de conteúdo principal, que fica ao lado da sidebar #}
+<main class="flex-1 flex items-center justify-center p-6 bg-gray-100">
+
+    {# Este é o card do formulário, que agora está dentro da área principal #}
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden p-8 md:p-12">
         <div class="text-center">
             <h1 class="mt-6 text-3xl font-extrabold text-gray-800">Criar Novo Card</h1>
             <p class="mt-2 text-gray-600 text-sm">Preencha os detalhes para adicionar um novo card ao mural.</p>
@@ -55,5 +58,5 @@
             </form>
         </div>
     </div>
-</div>
+</main>
 {% endblock 'body' %}
