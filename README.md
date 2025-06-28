@@ -1,130 +1,91 @@
+### 1. Autenticação e Gestão de Usuários
+* **Cadastro de Usuários:** Permite que novos usuários se registrem no sistema.
+* **Login e Logout:** Gerenciamento de sessão de usuário.
+* **Segurança Básica:** Validação de senha no backend e autenticação de usuários.
 
-# SIGED – Sistema Integrado de Gestão e Desenvolvimento
+### 2. Mural Interativo
+* **Visualização de Cards:** Exibe cards com avisos e informações.
+* **Adicionar Card (Admin-only):** Formulário dedicado para administradores criarem novos cards.
+    * Página de criação (`/home/cards/novo/`) com visual consistente e centralizado.
+    * Link "Adicionar Card" na sidebar, visível apenas para admins.
+* **Editar Card (Admin-only):** Permite a edição de cards existentes.
+    * Link de edição em cada card no mural (visível apenas para admins).
+    * Página de edição (`/home/cards/editar/<id>/`) com visual consistente e centralizado.
+* **Remover Card:** Funcionalidade de exclusão de cards diretamente do mural.
+* **Arrastar e Soltar:** Cards no mural podem ser reorganizados via drag-and-drop.
 
-## 📑 Visão Geral
-Este projeto visa centralizar e otimizar a gestão de diversas atividades, desde a organização de tarefas em um mural interativo até o gerenciamento completo de chamados, tudo isso integrado a um sistema de chat em tempo real.  
-O **SIGED** é um ambiente de aprendizado e aprimoramento contínuo, focado em trazer funcionalidades que realmente fazem a diferença.
+### 3. Central de Serviços (Chamados)
+* **Abertura de Chamados:** Usuários podem abrir chamados selecionando um setor e preenchendo detalhes.
+* **Visualização de Meus Chamados:** Usuários podem ver o status e detalhes dos seus próprios chamados.
+* **Detalhamento de Chamados:** Visualização detalhada de um chamado específico.
+* **Gerenciamento de Chamados (Admin):** Administradores podem visualizar e atualizar chamados no painel Django Admin.
 
----
+### 4. Chat em Tempo Real
+* **Comunicação Bidirecional:** Chat funcional que permite troca de mensagens em tempo real.
+* **Tecnologia:** Utiliza Django Channels e Redis para a comunicação assíncrona.
+* **Salas de Chat:** Implementação inicial com uma sala "Geral".
+* **Histórico de Mensagens:** Mensagens são salvas no banco de dados e carregadas ao entrar na sala.
+* **Interface:** Página de chat (`/home/chat/geral/`) com visual modernizado, centralizado e área de mensagens expandida para melhor usabilidade.
+* **Acesso:** Link na sidebar para a página do chat.
 
-## 🚀 Funcionalidades Atuais
+### 5. Dashboard Administrativo
+* **Página Exclusiva para Admins:** Um dashboard (`/home/dashboard-admin/`) que exibe métricas e informações importantes do sistema, acessível apenas por usuários com permissões de equipe (`is_staff`).
+* **Métricas Iniciais:** Exibe total de chamados, chamados abertos e resolvidos, e últimas mensagens do chat.
+* **Link na Sidebar:** Acesso direto via sidebar, visível apenas para usuários administradores.
 
-### ✅ Mural Interativo
-- Crie e visualize **cards dinâmicos** em um mural intuitivo.
-- Ideal para organizar tarefas e acompanhar o progresso visualmente, facilitando a colaboração em equipe ou pessoal.
-
-### ✅ Gestão de Chamados com Dashboard Administrativo
-- **Abertura e acompanhamento de chamados** de forma clara e organizada.
-- **Dashboard completo**, com filtros inteligentes por status, setor e outras categorias, permitindo uma gestão eficiente dos chamados.
-
-### ✅ Chat em Tempo Real (Inspirado no Zendesk)
-- Comunicação em tempo real vinculada a um **ID de ticket específico**.
-- Desenvolvido com **WebSockets e Daphne**, garantindo uma comunicação rápida, fluida e eficiente.
-
----
-
-## 🛠️ Como Clonar e Rodar o SIGED Localmente
-
-Siga este passo a passo para configurar e executar o projeto na sua máquina.
-
----
-
-### 1️⃣ Pré-requisitos
-Certifique-se de ter as seguintes ferramentas instaladas:
-
-- **Python** (versão 3.9 ou superior): [Download Python](https://www.python.org)
-- **Git**: [Download Git](https://git-scm.com)
-
----
-
-### 2️⃣ Clonar o Repositório
-
-Abra o terminal e execute:
-
-```bash
-git clone https://github.com/ranixx1/SIGED
-```
+### 6. Design e Layout
+* **Sidebar Responsiva:** Sidebar com funcionalidade de expandir/colapsar.
+* **Consistência Visual:** Layout padronizado através de um `base.html` com estilos Tailwind CSS, aplicado a diversas páginas (login, cadastro, criar/editar/deletar card, chat, dashboard).
 
 ---
 
-### 3️⃣ Acessar o Diretório do Projeto
+## Como Rodar o Projeto (Ambiente de Desenvolvimento)
 
-```bash
-cd SIGED
-```
-
----
-
-### 4️⃣ Criar e Ativar um Ambiente Virtual
-
-**Criar o ambiente virtual:**
-
-```bash
-python -m venv venv
-```
-
-**Ativar no Windows:**
-
-```bash
-.env\Scriptsctivate
-```
-
-**Ativar no macOS/Linux:**
-
-```bash
-source venv/bin/activate
-```
-
----
-
-### 5️⃣ Instalar as Dependências
-
-Com o ambiente virtual ativado, execute:
-
-```bash
-pip install django pillow channels daphne
-```
-
-Ou, se houver um arquivo `requirements.txt` no projeto (recomendado):
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-### 6️⃣ Configurar o Banco de Dados
-
-Execute as migrações:
-
-```bash
-python manage.py migrate
-```
+1.  **Clone o repositório:**
+    ```bash
+    git clone [URL_DO_SEU_REPOSITORIO]
+    cd [pasta_do_seu_repositorio]
+    ```
+2.  **Crie e ative um ambiente virtual:**
+    ```bash
+    python -m venv venv
+    # No Linux/macOS:
+    source venv/bin/activate
+    # No Windows (CMD):
+    venv\Scripts\activate.bat
+    # No Windows (PowerShell):
+    .\venv\Scripts\Activate.ps1
+    ```
+3.  **Instale as dependências:**
+    ```bash
+    pip install -r requirements.txt # (Se você tiver um requirements.txt)
+    # Caso contrário, instale manualmente:
+    pip install django daphne channels channels_redis
+    ```
+4.  **Configure o arquivo `.env`:**
+    Crie um arquivo `.env` na raiz do projeto (`suap-clone/.env`) e adicione suas chaves de API (se for usar IA no futuro):
+    ```
+    GEMINI_API_KEY=SUA_CHAVE_DE_API_AQUI # Exemplo, se for integrar IA
+    ```
+5.  **Aplique as migrações do banco de dados:**
+    ```bash
+    python manage.py makemigrations App usuarios
+    python manage.py migrate
+    ```
+6.  **Crie um superusuário (para acesso ao admin e dashboard):**
+    ```bash
+    python manage.py createsuperuser
+    ```
+7.  **Inicie o servidor Redis:**
+    Abra um novo terminal e execute:
+    ```bash
+    redis-server
+    ```
+8.  **Inicie o servidor Django:**
+    Abra outro terminal e execute:
+    ```bash
+    python manage.py runserver
+    ```
+    O sistema estará acessível em `http://127.0.0.1:8000/`.
 
 ---
-
-### 7️⃣ Criar um Superusuário (Opcional)
-
-Para acessar o painel administrativo do Django:
-
-```bash
-python manage.py createsuperuser
-```
-
-Siga as instruções para definir nome, e-mail e senha.
-
----
-
-### 8️⃣ Rodar o Servidor de Desenvolvimento
-
-Execute:
-
-```bash
-python manage.py runserver
-```
-
-Acesse o projeto no navegador:  
-👉 [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-
----
-
