@@ -169,12 +169,21 @@
                     class="flex items-center justify-between mb-4 p-2 bg-[#3a5a2a]/50 rounded-lg">
                     <div class="flex items-center gap-3">
                         <div
-                            class="w-10 h-10 bg-[#3a5a2a] rounded-full flex items-center justify-center text-white font-bold overflow-hidden">
+                            class="w-10 h-10 rounded-full bg-[#3a5a2a] border-2 border-white/50 flex-shrink-0 flex items-center justify-center text-white font-semibold text-sm shadow-md">
                             {% if user.is_authenticated %}
-                            <span class="sidebar-text">{{ user.first_name|first|upper }}{{ user.last_name|first|upper
-                                }}</span>
+                            {% if user.first_name %}
+                            {{ user.first_name.0|upper }}
+                            {% endif %}
+                            {% if user.last_name %}
+                            {{ user.last_name.0|upper }}
+                            {% endif %}
+
+                            {# Se nenhum nome estiver definido, usa a inicial do username #}
+                            {% if not user.first_name and not user.last_name %}
+                            {{ user.username.0|upper }}
+                            {% endif %}
                             {% else %}
-                            <span class="sidebar-text">?</span>
+                            ?
                             {% endif %}
                         </div>
                         <div class="text-sm sidebar-text">
@@ -189,11 +198,23 @@
                     </div>
                 </div>
                 <div id="user-info-collapsed" class="flex items-center justify-center py-2 hidden">
-                    <div
-                        class="w-10 h-10 bg-[#3a5a2a] rounded-full flex items-center justify-center text-white font-bold overflow-hidden">
-                        <span class="material-icons">account_circle</span>
+                    <div class="w-9 h-9 bg-[#3a5a2a] border border-white rounded-full flex items-center justify-center text-white font-semibold text-sm"
+                        title="{% if user.is_authenticated %}{{ user.get_full_name|default:user.username }}{% else %}Visitante{% endif %}">
+                        {% if user.is_authenticated %}
+                        {{ user.first_name|first|upper }}
+                        {% else %}
+                        ?
+                        {% endif %}
                     </div>
                 </div>
+
+            </div>
+            <div id="user-info-collapsed" class="flex items-center justify-center py-2 hidden">
+                <div
+                    class="w-10 h-10 bg-[#3a5a2a] rounded-full flex items-center justify-center text-white font-bold overflow-hidden">
+                    <span class="material-icons">account_circle</span>
+                </div>
+            </div>
             </div>
 
             <div id="search-box-expanded" class="relative mb-6">
