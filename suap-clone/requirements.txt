@@ -1,0 +1,7 @@
+django
+python-decouple
+dj-database-url==2.1.0
+psycopg2-binary
+daphne
+channels
+channels_redis
