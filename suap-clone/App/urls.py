@@ -11,7 +11,7 @@ urlpatterns = [
     path('cards/deletar/<int:id>/', views.deletar_card, name='deletar_card'),
     path('chamados/', views.chamados, name='chamados'),
     path('chamado/criar/', views.criar_chamado, name='criar_chamado'),
-    path('meus-chamados/', views.ver_chamados, name='ver_chamados'), # Esta linha está correta
+    path('meus-chamados/', views.ver_chamados, name='ver_chamados'), 
     path('meus-chamados/<int:id>/', views.detalhe_chamado, name='detalhe_chamado'),
 
     # Rota para iniciar o chat de suporte
