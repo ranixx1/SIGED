@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from django.db import transaction
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # Corrigido aqui: PageNotAnInteger
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger 
 from django.db.models import Q # Importe Q para queries complexas
 
 from .models import Card, Chamado, ChatMessage # Importe seus modelos
@@ -246,5 +246,5 @@ def ver_chamados_admin(request):
         'status_filter': status_filter,
         'search_query': search_query,
         'chat_ticket_filter': chat_ticket_filter == 'true',
-        'chamado_status_choices': chamado_status_choices, # Passa as escolhas para o template
+        'chamado_status_choices': chamado_status_choices, 
     })
