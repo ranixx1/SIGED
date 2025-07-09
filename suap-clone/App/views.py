@@ -174,6 +174,22 @@ def chat_room(request, room_name):
         'chamado_associado': chamado_associado, # Passa o chamado associado, se existir
     })
 
+# Fechar chat
+@staff_member_required
+@require_http_methods(["POST"])
+def fechar_chat(request, id):
+    chamado = get_object_or_404(Chamado, id=id, chat_room_name__isnull=False)
+
+    if chamado.status in ['resolvido', 'fechado']:
+        return JsonResponse({'success': False, 'message': 'Este chat já foi encerrado.'}, status=400)
+
+    chamado.status = 'fechado'
+    chamado.save()
+
+    return JsonResponse({'success': True, 'message': 'Chat encerrado com sucesso!'})
+
+
+
 @staff_member_required # Apenas usuários com is_staff=True podem acessar
 def dashboard_admin(request):
     total_chamados = Chamado.objects.count()
