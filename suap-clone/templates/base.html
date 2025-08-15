@@ -306,18 +306,6 @@
                     <a href="{% url 'ver_chamados' %}" class="submenu-item">Meus Chamados</a>
                 </div>
 
-                <div>
-                    <a href="#" onclick="toggleSubmenu('submenu-suporte')" class="sidebar-item">
-                        <span class="material-icons">support</span>
-                        <span class="sidebar-text">Suporte</span>
-                    </a>
-                    <div id="submenu-suporte"
-                        class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
-                        <a href="{% url 'iniciar_chat_suporte' %}" class="submenu-item">Chat de Suporte</a>
-                        <a href="#" class="submenu-item">Contato</a>
-                        <a href="#" class="submenu-item">Manuais</a>
-                    </div>
-                </div>
                 <a href="{% url 'logout' %}" class="sidebar-item text-white hover:text-white">
                     <span class="material-icons">logout</span>
                     <span class="sidebar-text">Sair</span>
