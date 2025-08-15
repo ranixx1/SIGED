@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'usuarios',
     'App',
     'channels',
+    'Chamados',
+    'Mural',
 ]
 
 MIDDLEWARE = [
