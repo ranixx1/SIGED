@@ -1,12 +1,7 @@
 # App/admin.py
 
 from django.contrib import admin
-from .models import Card, Chamado, AtualizacaoChamado
-
-@admin.register(Card)
-class CardAdmin(admin.ModelAdmin):
-    list_display = ('id', 'titulo', 'descricao')
-    search_fields = ('titulo', 'descricao')
+from .models import Chamado, AtualizacaoChamado
 
 class AtualizacaoInline(admin.TabularInline):
     model = AtualizacaoChamado
