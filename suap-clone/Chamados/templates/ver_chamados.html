@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'body' %}
+<div class="max-w-6xl mx-auto p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-green-600">Meus Chamados</h2>
+        <a href="{% url 'criar_chamado' %}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center">
+            <i class="bi bi-plus-circle mr-2"></i> Novo Chamado
+        </a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="bg-white p-4 rounded-lg shadow mb-6">
+        <form method="get" class="flex flex-wrap gap-4 items-center">
+            <div>
+                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select name="status" id="status" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="">Todos</option>
+                    <option value="aberto" {% if request.GET.status == 'aberto' %}selected{% endif %}>Aberto</option>
+                    <option value="em_andamento" {% if request.GET.status == 'em_andamento' %}selected{% endif %}>Em Andamento</option>
+                    <option value="resolvido" {% if request.GET.status == 'resolvido' %}selected{% endif %}>Resolvido</option>
+                </select>
+            </div>
+            
+            <div class="flex-1 min-w-[200px]">
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
+                <input type="text" name="search" id="search" value="{{ request.GET.search }}" 
+                       class="border border-gray-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-green-500" 
+                       placeholder="Assunto ou descrição...">
+            </div>
+            
+            <div class="self-end">
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                    <i class="bi bi-funnel mr-2"></i>Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Lista de Chamados -->
+    {% if chamados %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for chamado in chamados %}
+                <div class="bg-white shadow-md rounded-lg p-5 border border-gray-200 hover:shadow-lg transition flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-lg font-semibold text-gray-800">
+                            {{ chamado.assunto }}
+                        </h3>
+                        <span class="px-2 py-1 text-xs rounded-full 
+                            {% if chamado.status == 'aberto' %}bg-green-100 text-green-800
+                            {% elif chamado.status == 'em_andamento' %}bg-yellow-100 text-yellow-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {{ chamado.get_status_display }}
+                        </span>
+                    </div>
+                    
+                    <p class="text-sm text-gray-600 mb-1">
+                        <i class="bi bi-building mr-2"></i><strong>Setor:</strong> {{ chamado.setor }}
+                    </p>
+                    
+                    <p class="text-sm text-gray-600 mb-1">
+                        <i class="bi bi-exclamation-triangle mr-2"></i><strong>Urgência:</strong> 
+                        <span class="{% if chamado.urgencia == 'alta' %}text-red-600{% elif chamado.urgencia == 'media' %}text-yellow-600{% else %}text-green-600{% endif %}">
+                            {{ chamado.get_urgencia_display }}
+                        </span>
+                    </p>
+                    
+                    <div class="my-3 flex-1">
+                        <p class="text-sm text-gray-500 line-clamp-3">
+                            {{ chamado.descricao }}
+                        </p>
+                    </div>
+                    
+                    <div class="mt-auto pt-3 border-t border-gray-100 flex justify-between items-center text-sm">
+                        <span class="text-gray-500">
+                            <i class="bi bi-calendar3 mr-1"></i>{{ chamado.data_criacao|date:"d/m/Y" }}
+                        </span>
+                        <a href="{% url 'detalhe_chamado' chamado.id %}" class="text-green-600 hover:underline flex items-center">
+                            Detalhes <i class="bi bi-chevron-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginação -->
+        {% if chamados.has_other_pages %}
+        <div class="mt-8 flex justify-center">
+            <nav class="flex items-center gap-1">
+                {% if chamados.has_previous %}
+                    <a href="?page={{ chamados.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" 
+                       class="px-3 py-1 border rounded-lg hover:bg-gray-50">
+                        &laquo;
+                    </a>
+                {% endif %}
+
+                {% for num in chamados.paginator.page_range %}
+                    {% if chamados.number == num %}
+                        <span class="px-3 py-1 border border-green-500 bg-green-500 text-white rounded-lg">{{ num }}</span>
+                    {% elif num > chamados.number|add:'-3' and num < chamados.number|add:'3' %}
+                        <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" 
+                           class="px-3 py-1 border rounded-lg hover:bg-gray-50">
+                            {{ num }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if chamados.has_next %}
+                    <a href="?page={{ chamados.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" 
+                       class="px-3 py-1 border rounded-lg hover:bg-gray-50">
+                        &raquo;
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
+        
+    {% else %}
+        <div class="bg-white p-8 rounded-lg shadow text-center">
+            <div class="text-gray-400 mb-4">
+                <i class="bi bi-inbox text-5xl"></i>
+            </div>
+            <p class="text-gray-600 mb-4 text-lg">Nenhum chamado encontrado</p>
+            <a href="{% url 'criar_chamado' %}" class="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+                Criar Primeiro Chamado
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
