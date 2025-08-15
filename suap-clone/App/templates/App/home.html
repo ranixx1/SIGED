@@ -134,7 +134,7 @@
             <div class="lg:col-span-1 bg-white rounded-xl shadow-sm p-4">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-[#7a9a5a]">Mural Interativo</h2>
-                    <a href="{% url 'criar_card' %}"
+                    <a href="{% url 'Mural:criar_card' %}"
                         class="text-sm text-[#7a9a5a] hover:text-[#9ec178] flex items-center">
                         <span class="material-icons text-base mr-1">add</span>
                         Novo</a>
@@ -151,7 +151,7 @@
                                     class="material-icons move-handle cursor-move text-sm hover:text-white/80">drag_handle</span>
                                 {# Novo: Botão de Editar #}
                                 {% if request.user.is_staff %} {# Apenas para admins #}
-                                <a href="{% url 'editar_card' card.id %}"
+                                <a href="{% url 'Mural:editar_card' card.id %}"
                                     class="material-icons cursor-pointer text-sm hover:text-white/80"
                                     title="Editar Card">edit</a>
                                 {% endif %}
