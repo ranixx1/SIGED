@@ -114,7 +114,7 @@
                     e.preventDefault();
                     const cardId = button.closest('.card').getAttribute('data-card-id');
                     if (confirm('Deseja realmente remover este item?')) {
-                        fetch(`{% url 'deletar_card' 0 %}`.replace('0', cardId), {
+                        fetch(`{% url 'Mural:deletar_card' 0 %}`.replace('0', cardId), {
                             method: 'POST',
                             headers: {
                                 'X-CSRFToken': '{{ csrf_token }}',
@@ -232,13 +232,13 @@
             </div>
 
             <nav class="flex flex-col gap-1 flex-1">
-                <a href="{% url 'home' %}" class="sidebar-item active">
+                <a href="{% url 'App:home' %}" class="sidebar-item active">
                     <span class="material-icons">home</span>
                     <span class="sidebar-text">Página Inicial</span>
                 </a>
 
                 {% if request.user.is_authenticated and request.user.is_staff %}
-                <a href="{% url 'dashboard_admin' %}" class="sidebar-item">
+                <a href="{% url 'App:dashboard_admin' %}" class="sidebar-item">
                     <span class="material-icons">dashboard</span>
                     <span class="sidebar-text">Dashboard Admin</span>
                 </a>
@@ -302,8 +302,8 @@
                 </a>
                 <div id="submenu-central"
                     class="submenu hidden ml-2 pl-4 border-l-2 border-[#5a7a3a]/30 flex flex-col gap-1">
-                    <a href="{% url 'criar_chamado' %}" class="submenu-item">Abrir Chamado</a>
-                    <a href="{% url 'ver_chamados' %}" class="submenu-item">Meus Chamados</a>
+                    <a href="{% url 'Chamados:criar_chamado' %}" class="submenu-item">Abrir Chamado</a>
+                    <a href="{% url 'Chamados:ver_chamados' %}" class="submenu-item">Meus Chamados</a>
                 </div>
 
                 <a href="{% url 'logout' %}" class="sidebar-item text-white hover:text-white">
