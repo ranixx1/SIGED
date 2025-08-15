@@ -150,3 +150,24 @@ def ver_chamados_admin(request):
         'search_query': search_query,
         'chamado_status_choices': chamado_status_choices, 
     })
+@staff_member_required # Apenas usuários com is_staff=True podem acessar
+def dashboard_admin(request):
+    total_chamados = Chamado.objects.count()
+    chamados_abertos = Chamado.objects.filter(status='aberto').count()
+    chamados_em_analise = Chamado.objects.filter(status='em_analise').count()
+    chamados_resolvidos = Chamado.objects.filter(status='resolvido').count()
+    
+    # Adiciona a busca pelos chamados recentes que o template precisa
+    chamados_recentes = Chamado.objects.order_by('-data_criacao')[:5]
+
+    # Cria o dicionário de contexto para enviar os dados ao template
+    context = {
+        'total_chamados': total_chamados,
+        'chamados_abertos': chamados_abertos,
+        'chamados_em_analise': chamados_em_analise,
+        'chamados_resolvidos': chamados_resolvidos,
+        'chamados_recentes': chamados_recentes
+    }
+
+    # Retorna a resposta HTTP, renderizando o template com os dados do contexto
+    return render(request, 'App/dashboard_admin.html', context)
