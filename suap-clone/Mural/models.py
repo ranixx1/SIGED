@@ -7,6 +7,3 @@ class Card(models.Model):
 
     def __str__(self):
         return self.titulo
-    
-    class Meta:
-        db_table = 'App_card'

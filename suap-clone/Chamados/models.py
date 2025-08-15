@@ -51,6 +51,3 @@ class AtualizacaoChamado(models.Model):
 
     def __str__(self):
         return f"Atualização #{self.id}"
-    
-    class Meta:
-        db_table = 'App_atualizacaochamado'
