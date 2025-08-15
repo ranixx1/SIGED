@@ -5,7 +5,7 @@
 <div class="max-w-6xl mx-auto p-6">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-green-600">Meus Chamados</h2>
-        <a href="{% url 'criar_chamado' %}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center">
+        <a href="{% url 'Chamados:criar_chamado' %}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center">
             <i class="bi bi-plus-circle mr-2"></i> Novo Chamado
         </a>
     </div>
@@ -76,7 +76,7 @@
                         <span class="text-gray-500">
                             <i class="bi bi-calendar3 mr-1"></i>{{ chamado.data_criacao|date:"d/m/Y" }}
                         </span>
-                        <a href="{% url 'detalhe_chamado' chamado.id %}" class="text-green-600 hover:underline flex items-center">
+                        <a href="{% url 'Chamados:detalhe_chamado' chamado.id %}" class="text-green-600 hover:underline flex items-center">
                             Detalhes <i class="bi bi-chevron-right ml-1"></i>
                         </a>
                     </div>
@@ -122,7 +122,7 @@
                 <i class="bi bi-inbox text-5xl"></i>
             </div>
             <p class="text-gray-600 mb-4 text-lg">Nenhum chamado encontrado</p>
-            <a href="{% url 'criar_chamado' %}" class="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
+            <a href="{% url 'Chamados:criar_chamado' %}" class="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
                 Criar Primeiro Chamado
             </a>
         </div>
