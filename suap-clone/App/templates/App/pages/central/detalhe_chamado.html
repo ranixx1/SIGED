@@ -41,15 +41,6 @@
                         <strong class="w-24 inline-block">Aberto em:</strong> 
                         {{ chamado.data_criacao|date:"d/m/Y H:i" }}
                     </li>
-                    {% if chamado.chat_room_name %} {# NOVO: Se for um chamado de chat #}
-                    <li class="flex items-center">
-                        <i class="bi bi-chat-dots mr-2 text-gray-500"></i>
-                        <strong class="w-24 inline-block">Sala do Chat:</strong> 
-                        <a href="{% url 'chat_room' chamado.chat_room_name %}" class="text-blue-600 hover:underline">
-                            {{ chamado.chat_room_name }}
-                        </a>
-                    </li>
-                    {% endif %}
                 </ul>
             </div>
             
