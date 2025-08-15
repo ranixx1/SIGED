@@ -28,10 +28,12 @@ class Card(models.Model):
 
     def __str__(self):
         return self.titulo
+```
+
 2. chamados/models.py
 Mova as classes Chamado e AtualizacaoChamado para este ficheiro.
 
-Python
+```python
 
 # chamados/models.py
 from django.db import models
