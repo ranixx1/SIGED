@@ -10,13 +10,14 @@ O primeiro passo é criar os novos apps que irão abrigar as funcionalidades. No
 ```bash
 python manage.py startapp mural
 python manage.py startapp chamados
-Passo 2: Mover os Models
+```
+## Passo 2: Mover os Models
 Vamos mover as classes dos models do antigo App/models.py para os seus novos lares.
 
 1. mural/models.py
 Mova a classe Card para este ficheiro.
 
-Python
+```python
 
 # mural/models.py
 from django.db import models
@@ -81,14 +82,16 @@ class AtualizacaoChamado(models.Model):
 
     def __str__(self):
         return f"Atualização #{self.id}"
-3. Limpe App/models.py
+
+```
+
+## 3. Limpe App/models.py
 Após a movimentação, o ficheiro App/models.py deve ficar vazio.
 
 Passo 3: Atualizar settings.py
 Adicione os novos apps à lista INSTALLED_APPS no ficheiro core/settings.py.
 
-Python
-
+```python
 # core/settings.py
 
 INSTALLED_APPS = [
@@ -105,7 +108,9 @@ INSTALLED_APPS = [
     'chamados',   # <-- Adicionar
     'channels',
 ]
-Passo 4: Gerir as Migrações (Passo Crucial)
+```
+
+## Passo 4: Gerir as Migrações (Passo Crucial)
 Para evitar a recriação de tabelas, informaremos ao Django sobre a mudança de localização dos modelos.
 
 1. Especifique as Tabelas Existentes
@@ -113,16 +118,18 @@ Adicione uma classe Meta a cada um dos seus modelos movidos, especificando o nom
 
 Em mural/models.py:
 
-Python
+```python
 
 # mural/models.py
 class Card(models.Model):
     # ... seus campos ...
     class Meta:
         db_table = 'App_card' # <-- Informa ao Django qual tabela usar
+```
+
 Em chamados/models.py:
 
-Python
+```python
 
 # chamados/models.py
 class Chamado(models.Model):
@@ -134,20 +141,26 @@ class AtualizacaoChamado(models.Model):
     # ... seus campos ...
     class Meta:
         db_table = 'App_atualizacaochamado' # <-- Informa ao Django qual tabela usar
+```
 2. Gere as Novas Migrações
 Execute o comando para criar os ficheiros de migração para os novos apps.
 
-Bash
+```bash
 
 python manage.py makemigrations mural
 python manage.py makemigrations chamados
-3. Aplique as Migrações "Falsas"
+
+```
+
+## 3. Aplique as Migrações "Falsas"
 Este comando atualiza o estado das migrações no Django sem alterar a estrutura do banco de dados.
 
-Bash
+```bash
 
 python manage.py migrate --fake-initial
-Passo 5: Mover Views e URLs
+
+```
+## Passo 5: Mover Views e URLs
 1. Crie os Ficheiros de URL
 mural/urls.py
 
@@ -156,7 +169,7 @@ chamados/urls.py
 2. Mova as URLs de App/urls.py
 Para mural/urls.py:
 
-Python
+```python
 
 # mural/urls.py
 from django.urls import path
@@ -169,9 +182,11 @@ urlpatterns = [
     path('cards/editar/<int:id>/', views.editar_card, name='editar_card'),
     path('cards/deletar/<int:id>/', views.deletar_card, name='deletar_card'),
 ]
+```
+
 Para chamados/urls.py:
 
-Python
+```python
 
 # chamados/urls.py
 from django.urls import path
@@ -186,17 +201,19 @@ urlpatterns = [
     path('meus/<int:id>/', views.detalhe_chamado, name='detalhe_chamado'),
     path('admin/', views.ver_chamados_admin, name='ver_chamados_admin'),
 ]
-3. Mova as Views de App/views.py
+```
+## 3. Mova as Views de App/views.py
 Mova as views criar_card, editar_card, deletar_card para mural/views.py.
 
 Mova as views chamados, criar_chamado, ver_chamados, detalhe_chamado, ver_chamados_admin para chamados/views.py.
 
 As views home e dashboard_admin devem permanecer em App/views.py.
 
-4. Atualize a Configuração de URLs Principal
+## 4. Atualize a Configuração de URLs Principal
+
 core/urls.py:
 
-Python
+```python
 
 # core/urls.py
 from django.contrib import admin
@@ -209,10 +226,11 @@ urlpatterns = [
     path('mural/', include('mural.urls')),
     path('chamados/', include('chamados.urls')),
 ]
+
+```
 App/urls.py (versão limpa):
 
-Python
-
+```python
 # App/urls.py
 from django.urls import path
 from django.contrib.auth.decorators import login_required
@@ -222,7 +240,9 @@ urlpatterns = [
     path('', login_required(views.home), name='home'),
     path('dashboard-admin/', views.dashboard_admin, name='dashboard_admin'),
 ]
-Passo 6: Mover Templates e Atualizar Referências
+```
+
+## Passo 6: Mover Templates e Atualizar Referências
 1. Crie Novas Pastas de Templates
 mural/templates/mural/
 
@@ -236,9 +256,11 @@ Mova chamado.html, ver_chamados.html, detalhe_chamado.html, ver_chamados_admin.h
 3. Atualize as Referências de URL nos Templates
 Use o app_name definido nos ficheiros urls.py para referenciar as rotas corretamente.
 
+```html
 {% url 'criar_card' %} torna-se {% url 'mural:criar_card' %}
 
 {% url 'criar_chamado' %} torna-se {% url 'chamados:criar_chamado' %}
+```
 
 Passo 7: Mover Forms e Admin
 Finalmente, organize os ficheiros restantes:
