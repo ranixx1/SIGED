@@ -20,22 +20,14 @@
 * **Detalhamento de Chamados:** Visualização detalhada de um chamado específico.
 * **Gerenciamento de Chamados (Admin):** Administradores podem visualizar e atualizar chamados no painel Django Admin.
 
-### 4. Chat em Tempo Real
-* **Comunicação Bidirecional:** Chat funcional que permite troca de mensagens em tempo real.
-* **Tecnologia:** Utiliza Django Channels e Redis para a comunicação assíncrona.
-* **Salas de Chat:** Implementação inicial com uma sala "Geral".
-* **Histórico de Mensagens:** Mensagens são salvas no banco de dados e carregadas ao entrar na sala.
-* **Interface:** Página de chat (`/home/chat/geral/`) com visual modernizado, centralizado e área de mensagens expandida para melhor usabilidade.
-* **Acesso:** Link na sidebar para a página do chat.
-
-### 5. Dashboard Administrativo
+### 4. Dashboard Administrativo
 * **Página Exclusiva para Admins:** Um dashboard (`/home/dashboard-admin/`) que exibe métricas e informações importantes do sistema, acessível apenas por usuários com permissões de equipe (`is_staff`).
 * **Métricas Iniciais:** Exibe total de chamados, chamados abertos e resolvidos, e últimas mensagens do chat.
 * **Link na Sidebar:** Acesso direto via sidebar, visível apenas para usuários administradores.
 
-### 6. Design e Layout
+### 5. Design e Layout
 * **Sidebar Responsiva:** Sidebar com funcionalidade de expandir/colapsar.
-* **Consistência Visual:** Layout padronizado através de um `base.html` com estilos Tailwind CSS, aplicado a diversas páginas (login, cadastro, criar/editar/deletar card, chat, dashboard).
+* **Consistência Visual:** Layout padronizado através de um `base.html` com estilos Tailwind CSS, aplicado a diversas páginas (login, cadastro, criar/editar/deletar card, dashboard).
 
 ---
 
@@ -76,12 +68,9 @@
     ```bash
     python manage.py createsuperuser
     ```
-7.  **Inicie o servidor Redis:**
-    Abra um novo terminal e execute:
-    ```bash
-    redis-server
+
     ```
-8.  **Inicie o servidor Django:**
+7.  **Inicie o servidor Django:**
     Abra outro terminal e execute:
     ```bash
     python manage.py runserver
