@@ -8,9 +8,9 @@ from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 from django.db import transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger 
-from django.db.models import Q # Importe Q para queries complexas
+from django.db.models import Q 
 
-from .models import Card, Chamado, ChatMessage # Importe seus modelos
+from .models import Card, Chamado 
 from .forms import CardForm, ChamadoForm
 from django.contrib.admin.views.decorators import staff_member_required
 
@@ -103,92 +103,6 @@ def detalhe_chamado(request, id):
         'chamado': chamado,
     })
 
-@login_required
-def iniciar_chat_suporte(request):
-    """
-    Inicia ou retoma um chat de suporte para o usuário, gerando um ticket (Chamado).
-    """
-    user = request.user
-
-    # Tentamos encontrar um chamado de chat de suporte aberto para este usuário
-    try:
-        chat_ticket = Chamado.objects.filter(
-            criado_por=user,
-            chat_room_name__isnull=False # Garante que é um chamado de chat
-        ).exclude(status__in=['resolvido', 'fechado']).first()
-
-    except Chamado.DoesNotExist:
-        chat_ticket = None
-
-    if chat_ticket:
-        # Se o usuário já tem um ticket de chat ativo, redireciona para a sala existente
-        room_name = chat_ticket.chat_room_name
-        messages.info(request, "Você já possui um chat de suporte ativo.")
-    else:
-        # Se não houver ticket ativo, cria um novo Chamado
-        try:
-            with transaction.atomic(): # Garante que a operação seja atômica
-                # Crie o Chamado primeiro para obter o ID
-                new_chamado = Chamado.objects.create(
-                    criado_por=user,
-                    assunto=f"Suporte via Chat - Usuário {user.username}",
-                    descricao=f"Chamado de suporte iniciado via chat pelo usuário {user.username}.",
-                    setor='ti', # Ou 'suporte_chat' se você adicionou em models.py
-                    urgencia='media', # Defina uma urgência padrão para chats
-                    status='aberto',
-                )
-
-                # Defina o room_name baseado no ID do Chamado
-                room_name = f'chat_suporte_{new_chamado.id}'
-                new_chamado.chat_room_name = room_name # Vincula o room_name ao chamado
-                new_chamado.save()
-
-                messages.success(request, f"Seu chamado de suporte #{new_chamado.id} foi criado. Iniciando chat.")
-        except Exception as e:
-            messages.error(request, f"Não foi possível iniciar o chat de suporte: {e}")
-            return redirect('home')
-
-    return redirect('chat_room', room_name=room_name)
-
-# VIEW PARA O CHAT
-@login_required
-def chat_room(request, room_name):
-    # Carrega as últimas 50 mensagens para a sala específica
-    messages_in_room = ChatMessage.objects.filter(room_name=room_name).order_by('timestamp')[:50]
-
-    # Opcional: Para passar o objeto Chamado associado ao template do chat
-    chamado_associado = None
-    if room_name.startswith('chat_suporte_'):
-        try:
-            # Tenta encontrar o chamado pelo chat_room_name
-            chamado_id = room_name.split('_')[-1]
-            chamado_associado = Chamado.objects.get(id=chamado_id, chat_room_name=room_name)
-        except (Chamado.DoesNotExist, ValueError):
-            messages.warning(request, "Chamado associado a este chat não encontrado.")
-            # Você pode querer redirecionar ou lidar com isso de outra forma
-            pass
-
-    return render(request, 'App/pages/chat/chat_room.html', {
-        'room_name': room_name,
-        'messages': messages_in_room, # Use 'messages_in_room' para evitar conflito com 'messages' do Django.
-        'chamado_associado': chamado_associado, # Passa o chamado associado, se existir
-    })
-
-# Fechar chat
-@staff_member_required
-@require_http_methods(["POST"])
-def fechar_chat(request, id):
-    chamado = get_object_or_404(Chamado, id=id, chat_room_name__isnull=False)
-
-    if chamado.status in ['resolvido', 'fechado']:
-        return JsonResponse({'success': False, 'message': 'Este chat já foi encerrado.'}, status=400)
-
-    chamado.status = 'fechado'
-    chamado.save()
-
-    return JsonResponse({'success': True, 'message': 'Chat encerrado com sucesso!'})
-
-
 
 @staff_member_required # Apenas usuários com is_staff=True podem acessar
 def dashboard_admin(request):
@@ -196,27 +110,6 @@ def dashboard_admin(request):
     chamados_abertos = Chamado.objects.filter(status='aberto').count()
     chamados_em_analise = Chamado.objects.filter(status='em_analise').count()
     chamados_resolvidos = Chamado.objects.filter(status='resolvido').count()
-
-
-    # Tickets de chat (Chamados que são do tipo 'chat_suporte')
-    tickets_chat_pendentes = Chamado.objects.filter(
-        chat_room_name__isnull=False
-    ).exclude(status__in=['resolvido', 'fechado']).count()
-
-    tickets_chat_resolvidos = Chamado.objects.filter(
-        chat_room_name__isnull=False,
-        status='resolvido'
-    ).count()
-
-    context = {
-        'total_chamados': total_chamados,
-        'chamados_abertos': chamados_abertos,
-        'chamados_em_analise': chamados_em_analise,
-        'chamados_resolvidos': chamados_resolvidos,
-        'tickets_chat_pendentes': tickets_chat_pendentes,
-        'tickets_chat_resolvidos': tickets_chat_resolvidos,
-    }
-    return render(request, 'App/pages/dashboard_admin.html', context)
 
 @staff_member_required # Apenas staff pode ver todos os chamados
 def ver_chamados_admin(request):
@@ -237,12 +130,6 @@ def ver_chamados_admin(request):
             Q(descricao__icontains=search_query) |
             Q(criado_por__username__icontains=search_query)
         )
-
-    # Filtrar apenas tickets de chat, se o parâmetro 'chat_ticket' estiver presente
-    chat_ticket_filter = request.GET.get('chat_ticket')
-    if chat_ticket_filter == 'true':
-        chamados_list = chamados_list.filter(chat_room_name__isnull=False)
-
     # Paginação
     paginator = Paginator(chamados_list, 10) # 10 chamados por página
     page_number = request.GET.get('page')
@@ -261,6 +148,5 @@ def ver_chamados_admin(request):
         'chamados': chamados,
         'status_filter': status_filter,
         'search_query': search_query,
-        'chat_ticket_filter': chat_ticket_filter == 'true',
         'chamado_status_choices': chamado_status_choices, 
     })
