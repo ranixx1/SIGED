@@ -14,11 +14,6 @@ urlpatterns = [
     path('meus-chamados/', views.ver_chamados, name='ver_chamados'), 
     path('meus-chamados/<int:id>/', views.detalhe_chamado, name='detalhe_chamado'),
 
-    # Rota para iniciar o chat de suporte
-    path('chat/suporte/', login_required(views.iniciar_chat_suporte), name='iniciar_chat_suporte'),
-    path('fechar-chat/<int:id>/', views.fechar_chat, name='fechar_chat'),
-
-    path('chat/<str:room_name>/', login_required(views.chat_room), name='chat_room'),
     path('dashboard-admin/', views.dashboard_admin, name='dashboard_admin'),
     path('admin/chamados/', views.ver_chamados_admin, name='ver_chamados_admin'), # Nova rota para admin
 ]
