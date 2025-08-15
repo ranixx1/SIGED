@@ -77,7 +77,8 @@
         <div class="bg-white p-6 rounded-xl shadow-md mt-8">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold text-gray-800">Últimos Chamados Recebidos</h2>
-                <a href="{% url 'Chamados:ver_chamados_admin' %}" class="text-sm font-medium text-green-600 hover:text-green-700 transition">
+                <a href="{% url 'Chamados:ver_chamados_admin' %}"
+                    class="text-sm font-medium text-green-600 hover:text-green-700 transition">
                     Ver Todos
                 </a>
             </div>
@@ -86,11 +87,21 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-100">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Assunto</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Usuário</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Urgência</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Data</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Assunto</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Usuário</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Status</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Urgência</th>
+                            <th
+                                class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                Data</th>
                             <th class="px-6 py-3"></th>
                         </tr>
                     </thead>
@@ -98,7 +109,8 @@
                         {% for chamado in chamados_recentes %}
                         <tr class="{% cycle 'bg-white' 'bg-gray-50' %} hover:bg-gray-100 transition">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ chamado.assunto|truncatechars:30 }}</div>
+                                <div class="text-sm font-medium text-gray-900">{{ chamado.assunto|truncatechars:30 }}
+                                </div>
                                 <div class="text-xs text-gray-500">{{ chamado.setor }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
@@ -123,7 +135,8 @@
                                 {{ chamado.data_criacao|date:"d/m/Y" }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                <a href="{% url 'Chamados:detalhe_chamado' chamado.id %}" class="text-green-600 hover:text-green-800">Detalhes</a>
+                                <a href="{% url 'Chamados:detalhe_chamado' chamado.id %}"
+                                    class="text-green-600 hover:text-green-800">Detalhes</a>
                             </td>
                         </tr>
                         {% empty %}
@@ -141,31 +154,57 @@
 </main>
 
 <!-- SCRIPT DO GRÁFICO -->
+ 
+ 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const ctx = document.getElementById('chamadosChart').getContext('2d');
     new Chart(ctx, {
         type: 'bar',
         data: {
-                labels: ['Total', 'Abertos', 'Em Análise', 'Resolvidos'],
-                datasets: [{
-                    label: 'Chamados',
-                    data: [
-                        Number('{{ total_chamados|default:0 }}'),
-                        Number('{{ chamados_abertos|default:0 }}'),
-                        Number('{{ chamados_em_analise|default:0 }}'),
-                        Number('{{ chamados_resolvidos|default:0 }}')
-                    ],
-                    borderWidth: 1
-                }]
+            labels: ['Total', 'Abertos', 'Em Análise', 'Resolvidos'],
+            datasets: [{
+                label: 'Chamados',
+                data: [
+                    Number('{{ total_chamados|default:0 }}'),
+                    Number('{{ chamados_abertos|default:0 }}'),
+                    Number('{{ chamados_em_analise|default:0 }}'),
+                    Number('{{ chamados_resolvidos|default:0 }}')
+                ],
+                // --- CORES ATUALIZADAS ---
+                backgroundColor: [
+                    'rgba(96, 165, 250, 0.7)',  // Azul para "Total"
+                    'rgba(34, 197, 94, 0.7)',   // Verde para "Abertos"
+                    'rgba(234, 179, 8, 0.7)',   // Amarelo para "Em Análise"
+                    'rgba(249, 115, 22, 0.7)'   // Laranja para "Resolvidos" (nova cor)
+                ],
+                borderColor: [
+                    'rgba(96, 165, 250, 1)',
+                    'rgba(34, 197, 94, 1)',
+                    'rgba(234, 179, 8, 1)',
+                    'rgba(249, 115, 22, 1)'
+                ],
+                borderWidth: 1
+            }]
         },
         options: {
             responsive: true,
             scales: {
-                y: { beginAtZero: true }
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
             }
         }
     });
 });
 </script>
+
 {% endblock %}
