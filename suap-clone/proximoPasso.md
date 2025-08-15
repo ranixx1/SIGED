@@ -87,10 +87,10 @@ class AtualizacaoChamado(models.Model):
 
 ```
 
-## 3. Limpe App/models.py
+3. Limpe App/models.py
 Após a movimentação, o ficheiro App/models.py deve ficar vazio.
 
-Passo 3: Atualizar settings.py
+## Passo 3: Atualizar settings.py
 Adicione os novos apps à lista INSTALLED_APPS no ficheiro core/settings.py.
 
 ```python
@@ -154,7 +154,7 @@ python manage.py makemigrations chamados
 
 ```
 
-## 3. Aplique as Migrações "Falsas"
+## <h3>3. Aplique as Migrações "Falsas"</h3>
 Este comando atualiza o estado das migrações no Django sem alterar a estrutura do banco de dados.
 
 ```bash
@@ -204,14 +204,14 @@ urlpatterns = [
     path('admin/', views.ver_chamados_admin, name='ver_chamados_admin'),
 ]
 ```
-## 3. Mova as Views de App/views.py
+## <h3>3. Mova as Views de App/views.py </h3>
 Mova as views criar_card, editar_card, deletar_card para mural/views.py.
 
 Mova as views chamados, criar_chamado, ver_chamados, detalhe_chamado, ver_chamados_admin para chamados/views.py.
 
 As views home e dashboard_admin devem permanecer em App/views.py.
 
-## 4. Atualize a Configuração de URLs Principal
+## <h3> 4. Atualize a Configuração de URLs Principal </h3>
 
 core/urls.py:
 
