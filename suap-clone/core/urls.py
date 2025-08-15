@@ -24,6 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('usuarios/', include('usuarios.urls')),
     path('home/', include('App.urls')),
+    path('mural/', include('Mural.urls')),
+    path('chamados/', include('Chamados.urls')),
     ] 
 if not settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
