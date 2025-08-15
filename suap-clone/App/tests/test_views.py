@@ -2,7 +2,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
-from ..models import Card, Chamado, ChatMessage 
+from ..models import Card, Chamado 
 from ..forms import CardForm, ChamadoForm      
 
 
@@ -145,61 +145,6 @@ class ChamadoViewsTestCase(BaseTestCase):
         self.assertIn(self.chamado_user1, response.context['chamados'])
         self.assertNotIn(self.chamado_user2, response.context['chamados'])
 
-
-class ChatViewsTestCase(BaseTestCase):
-    """ Testes para as views relacionadas ao Chat """
-
-    def test_iniciar_chat_suporte_creates_new_ticket_and_redirects(self):
-        self.client.login(username='testuser', password='password123')
-        chamado_count_before = Chamado.objects.count()
-
-        response = self.client.get(reverse('iniciar_chat_suporte'))
-        
-        self.assertEqual(Chamado.objects.count(), chamado_count_before + 1)
-        new_chamado = Chamado.objects.latest('data_criacao')
-        
-        self.assertEqual(new_chamado.criado_por, self.user)
-        self.assertIsNotNone(new_chamado.chat_room_name)
-        
-        expected_redirect_url = reverse('chat_room', args=[new_chamado.chat_room_name])
-        self.assertRedirects(response, expected_redirect_url, status_code=302, target_status_code=200)
-
-    def test_iniciar_chat_suporte_uses_existing_ticket(self):
-        self.client.login(username='testuser', password='password123')
-        # Cria um chamado de chat pré-existente e ativo para o usuário
-        existing_chat = Chamado.objects.create(
-            criado_por=self.user,
-            assunto='Chat antigo',
-            descricao='...',
-            status='aberto',
-            chat_room_name='chat_suporte_999'
-        )
-        chamado_count_before = Chamado.objects.count()
-        
-        response = self.client.get(reverse('iniciar_chat_suporte'))
-        
-        # Garante que nenhum chamado novo foi criado
-        self.assertEqual(Chamado.objects.count(), chamado_count_before)
-        
-        # Garante que o redirecionamento foi para a sala existente
-        expected_redirect_url = reverse('chat_room', args=[existing_chat.chat_room_name])
-        self.assertRedirects(response, expected_redirect_url, status_code=302, target_status_code=200)
-
-    def test_chat_room_view(self):
-        self.client.login(username='testuser', password='password123')
-        room_name = 'chat_suporte_123'
-        chamado = Chamado.objects.create(criado_por=self.user, id=123, chat_room_name=room_name)
-        msg = ChatMessage.objects.create(room_name=room_name, user=self.user, message='Olá, mundo')
-
-        response = self.client.get(reverse('chat_room', args=[room_name]))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'App/pages/chat/chat_room.html')
-        self.assertEqual(response.context['room_name'], room_name)
-        self.assertEqual(response.context['chamado_associado'], chamado)
-        self.assertIn(msg, response.context['messages'])
-
-
 class AdminViewsTestCase(BaseTestCase):
     """ Testes para as views de administração (dashboard, etc.) """
 
@@ -207,7 +152,6 @@ class AdminViewsTestCase(BaseTestCase):
         super().setUp()
         Chamado.objects.create(criado_por=self.user, assunto='Aberto 1', status='aberto')
         Chamado.objects.create(criado_por=self.user, assunto='Resolvido 1', status='resolvido')
-        Chamado.objects.create(criado_por=self.user, assunto='Chat 1', chat_room_name='chat_1', status='aberto')
 
     def test_dashboard_admin_access_by_staff(self):
         self.client.login(username='staffuser', password='password123')
@@ -219,7 +163,6 @@ class AdminViewsTestCase(BaseTestCase):
         self.assertEqual(response.context['total_chamados'], 3)
         self.assertEqual(response.context['chamados_abertos'], 2)
         self.assertEqual(response.context['chamados_resolvidos'], 1)
-        self.assertEqual(response.context['tickets_chat_pendentes'], 1)
 
     def test_dashboard_admin_redirects_non_staff(self):
         self.client.login(username='testuser', password='password123')
@@ -245,10 +188,3 @@ class AdminViewsTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['chamados']), 1)
         self.assertEqual(response.context['chamados'][0].assunto, 'Aberto 1')
-
-    def test_ver_chamados_admin_filter_by_chat_ticket(self):
-        self.client.login(username='staffuser', password='password123')
-        response = self.client.get(reverse('ver_chamados_admin'), {'chat_ticket': 'true'})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context['chamados']), 1)
-        self.assertIsNotNone(response.context['chamados'][0].chat_room_name)
