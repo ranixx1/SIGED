@@ -12,7 +12,7 @@ def criar_card(request):
         form = CardForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('App:home') # Redireciona para a home do app principal
+            return redirect('App:home') 
     else:
         form = CardForm()
     return render(request, 'Mural/criar_card.html', {'form': form})
