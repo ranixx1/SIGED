@@ -16,7 +16,7 @@ class ChamadoAdmin(admin.ModelAdmin):
     list_display = ('id', 'assunto', 'criado_por', 'setor', 'status', 'urgencia', 'data_criacao')
     list_filter = ('status', 'urgencia', 'setor')
     search_fields = ('assunto', 'descricao', 'criado_por__username') 
-    readonly_fields = ('data_criacao',) # <--- CORRIGIDO COM A VÍRGULA
+    readonly_fields = ('data_criacao',)
     inlines = [AtualizacaoInline]
     
     def get_queryset(self, request):
