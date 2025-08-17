@@ -168,7 +168,7 @@
                 <div id="user-info-expanded"
                     class="flex items-center justify-between mb-4 p-2 bg-[#3a5a2a]/50 rounded-lg">
                     <div class="flex items-center gap-3">
-                        <div
+                        <a href="{% url 'App:dashboard_admin' %}"><div
                             class="w-10 h-10 rounded-full bg-[#3a5a2a] border-2 border-white/50 flex-shrink-0 flex items-center justify-center text-white font-semibold text-sm shadow-md">
                             {% if user.is_authenticated %}
                             {% if user.first_name %}
@@ -186,6 +186,7 @@
                             ?
                             {% endif %}
                         </div>
+                        </a>
                         <div class="text-sm sidebar-text">
                             {% if user.is_authenticated %}
                             <div class="font-medium">{{ user.get_full_name|default:user.username }}</div>
