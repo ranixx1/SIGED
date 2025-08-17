@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.http import require_http_methods
 from .models import Card
-from .forms import CardForm 
+from .forms import CardForm
 
 @staff_member_required
 def criar_card(request):
@@ -12,10 +12,10 @@ def criar_card(request):
         form = CardForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('App:home') 
+            return redirect('App:home')
     else:
         form = CardForm()
-    return render(request, 'Mural/criar_card.html', {'form': form})
+    return render(request, 'criar_card.html', {'form': form})
 
 @staff_member_required
 @require_http_methods(["GET", "POST"])
@@ -28,7 +28,7 @@ def editar_card(request, id):
             return redirect('App:home')
     else:
         form = CardForm(instance=card)
-    return render(request, 'Mural/editar_card.html', {'form': form, 'card': card})
+    return render(request, 'editar_card.html', {'form': form, 'card': card})
 
 @staff_member_required
 @require_http_methods(["POST"])
