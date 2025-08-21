@@ -168,24 +168,25 @@
                 <div id="user-info-expanded"
                     class="flex items-center justify-between mb-4 p-2 bg-[#3a5a2a]/50 rounded-lg">
                     <div class="flex items-center gap-3">
-                        <a href="{% url 'App:dashboard_admin' %}"><div
-                            class="w-10 h-10 rounded-full bg-[#3a5a2a] border-2 border-white/50 flex-shrink-0 flex items-center justify-center text-white font-semibold text-sm shadow-md">
-                            {% if user.is_authenticated %}
-                            {% if user.first_name %}
-                            {{ user.first_name.0|upper }}
-                            {% endif %}
-                            {% if user.last_name %}
-                            {{ user.last_name.0|upper }}
-                            {% endif %}
+                        <a href="{% url 'App:dashboard_admin' %}">
+                            <div
+                                class="w-10 h-10 rounded-full bg-[#3a5a2a] border-2 border-white/50 flex-shrink-0 flex items-center justify-center text-white font-semibold text-sm shadow-md">
+                                {% if user.is_authenticated %}
+                                {% if user.first_name %}
+                                {{ user.first_name.0|upper }}
+                                {% endif %}
+                                {% if user.last_name %}
+                                {{ user.last_name.0|upper }}
+                                {% endif %}
 
-                            {# Se nenhum nome estiver definido, usa a inicial do username #}
-                            {% if not user.first_name and not user.last_name %}
-                            {{ user.username.0|upper }}
-                            {% endif %}
-                            {% else %}
-                            ?
-                            {% endif %}
-                        </div>
+                                {# Se nenhum nome estiver definido, usa a inicial do username #}
+                                {% if not user.first_name and not user.last_name %}
+                                {{ user.username.0|upper }}
+                                {% endif %}
+                                {% else %}
+                                ?
+                                {% endif %}
+                            </div>
                         </a>
                         <div class="text-sm sidebar-text">
                             {% if user.is_authenticated %}
@@ -256,7 +257,10 @@
                         <a href="#" class="submenu-item">Processos</a>
                     </div>
                 </div>
-
+                <a href="{% url 'Calendario:calendario' %}" class="sidebar-item">
+                    <span class="material-icons">calendar_today</span>
+                    <span class="sidebar-text">Calendário</span>
+                </a>
                 <div>
                     <a href="#" onclick="toggleSubmenu('submenu-ensino')" class="sidebar-item">
                         <span class="material-icons">school</span>

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'channels',
     'Chamados',
     'Mural',
+    'Calendario',
 ]
 
 MIDDLEWARE = [
