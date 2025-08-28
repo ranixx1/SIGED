@@ -35,24 +35,22 @@
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [URL_DO_SEU_REPOSITORIO]
-    cd [pasta_do_seu_repositorio]
+    git clone https://GitHub.com/ranixx1/siged
+    cd siged
     ```
 2.  **Crie e ative um ambiente virtual:**
     ```bash
-    python -m venv venv
+    python -m venv .venv
     # No Linux/macOS:
-    source venv/bin/activate
+    source .venv/bin/activate
     # No Windows (CMD):
-    venv\Scripts\activate.bat
+    .venv\Scripts\activate.bat
     # No Windows (PowerShell):
-    .\venv\Scripts\Activate.ps1
+    .\.venv\Scripts\Activate.ps1
     ```
 3.  **Instale as dependências:**
     ```bash
-    pip install -r requirements.txt # (Se você tiver um requirements.txt)
-    # Caso contrário, instale manualmente:
-    pip install django daphne channels channels_redis
+    pip install django daphne
     ```
 4.  **Configure o arquivo `.env`:**
     Crie um arquivo `.env` na raiz do projeto (`suap-clone/.env`) e adicione suas chaves de API (se for usar IA no futuro):
